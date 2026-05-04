@@ -4,12 +4,13 @@ import Container from "../layouts/Container";
 
 export default function Header() {
     return (
-        <header className="bg-black text-white py-4">
-            <Container className="flex flex-row items-center justify-between">
+        <header className="bg-[#302400] text-white py-4">
+
+            <Container className="flex flex-row items-center justify-center">
                 <h1>
                     Maestro Especial
                 </h1>
-                <ul className="flex flex-row gap-5">
+                {/* <ul className="flex flex-row gap-5">
                     <li>
                         <Link href="/">Inicio</Link>
                     </li>
@@ -22,8 +23,9 @@ export default function Header() {
                     <li>
                         <Link href="/">Contactos</Link>
                     </li>
-                </ul>
+                </ul> */}
             </Container>
+            
         </header>
     )
 }
