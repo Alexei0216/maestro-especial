@@ -7,7 +7,7 @@ export default function Header() {
         <header className="bg-[#302400] text-white py-4">
 
             <Container className="flex flex-row items-center justify-center">
-                <h1>
+                <h1 className="text-3xl font-bold">
                     Maestro Especial
                 </h1>
                 {/* <ul className="flex flex-row gap-5">

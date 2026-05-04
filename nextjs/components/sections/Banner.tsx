@@ -44,7 +44,7 @@ export default function Banner() {
                                 priority
                             />
 
-                            <button className="mt-10 bg-yellow-500 hover:bg-yellow-600 transition text-black font-bold py-3 px-16 rounded-xl">
+                            <button className="mt-10 bg-yellow-500 hover:bg-yellow-600 transition text-black font-bold py-3 px-16 rounded-xl cursor-pointer">
                                 Comprar
                             </button>
                         </div>
