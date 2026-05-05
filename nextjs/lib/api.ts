@@ -1,10 +1,27 @@
 import { StrapiProduct } from "../types/strapi";
 import { Product } from "../types/product";
 
-const API_URL = "http://localhost:1337";
+const SERVER_API_URL =
+    process.env.STRAPI_API_URL ??
+    process.env.NEXT_PUBLIC_API_URL ??
+    "http://localhost:1337";
+
+const PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:1337";
+
+function getMediaUrl(url?: string): string | undefined {
+    if (!url) {
+        return undefined;
+    }
+
+    if (url.startsWith("http")) {
+        return url;
+    }
+
+    return `${PUBLIC_API_URL}${url}`;
+}
 
 export async function getProducts(): Promise<Product[]> {
-    const res = await fetch(`${API_URL}/api/products?populate=*`, {
+    const res = await fetch(`${SERVER_API_URL}/api/products?populate=*`, {
         cache: "no-store",
     });
 
@@ -16,11 +33,9 @@ export async function getProducts(): Promise<Product[]> {
 
     return (data?.data ?? []).map((item: StrapiProduct): Product => ({
         id: item.id,
-        name: item.attributes.name,
-        description: item.attributes.description,
-        price: item.attributes.price,
-        image: item.attributes.image?.data?.attributes?.url
-            ? `${API_URL}${item.attributes.image.data.attributes.url}`
-            : undefined,
+        name: item.name,
+        description: item.description,
+        price: item.price,
+        image: getMediaUrl(item.image?.url),
     }));
 }

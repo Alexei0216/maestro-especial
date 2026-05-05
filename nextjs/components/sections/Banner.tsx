@@ -42,6 +42,7 @@ export default function Banner() {
                                 width={400}
                                 height={300}
                                 priority
+                                className="h-auto"
                             />
 
                             <button className="mt-10 bg-yellow-500 hover:bg-yellow-600 transition text-black font-bold py-3 px-16 rounded-xl cursor-pointer">
