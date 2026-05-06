@@ -1,13 +1,13 @@
 export default function Section({
-    children,
-    className = "",
+  children,
+  className = "",
 }: {
-    children: React.ReactNode;
-    className?: string;
+  children: React.ReactNode;
+  className?: string;
 }) {
-    return (
-        <div className={`max-w-6xl mx-auto px-5 w-full ${className}`}>
-            {children}
-        </div>
-    )
+  return (
+    <div className={`max-w-6xl mx-auto px-5 w-full ${className}`}>
+      {children}
+    </div>
+  );
 }

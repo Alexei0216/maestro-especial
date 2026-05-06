@@ -1,13 +1,15 @@
 export default function Container({
-    children,
-    className = "",
+  children,
+  className = "",
 }: {
-    children: React.ReactNode;
-    className?: string;
+  children: React.ReactNode;
+  className?: string;
 }) {
-    return (
-        <div className={`max-w-[1800px] max-h-md mx-auto px-5 w-full ${className}`}>
-            {children}
-        </div>
-    )
+  return (
+    <div
+      className={`max-w-[1800px] max-h-md mx-auto px-15 w-full ${className}`}
+    >
+      {children}
+    </div>
+  );
 }
