@@ -34,7 +34,7 @@ export default function ProductCard({
         <div className="mt-auto flex items-center justify-between">
           <span className="text-xl font-bold text-black">€{price ?? "—"}</span>
 
-          <button className="bg-yellow-500 hover:bg-yellow-600 transition text-black font-semibold px-5 py-2 rounded-lg">
+          <button className="bg-yellow-500 hover:bg-yellow-600 cursor-pointer transition text-black font-semibold px-5 py-2 rounded-lg">
             Comprar
           </button>
         </div>
