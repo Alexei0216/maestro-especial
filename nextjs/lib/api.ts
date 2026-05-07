@@ -39,6 +39,29 @@ export async function getProducts(): Promise<Product[]> {
       description: item.description,
       price: item.price,
       image: getMediaUrl(item.image?.url),
+      gallery: (item.gallery ?? [])
+        .map((media) => getMediaUrl(media.url))
+        .filter((url): url is string => Boolean(url)),
+      category: item.category,
     }),
   );
+}
+
+export async function getProduct(id: string): Promise<Product | undefined> {
+  const products = await getProducts();
+
+  return products.find((product) => String(product.id) === id);
+}
+
+export async function getRelatedProducts(product: Product): Promise<Product[]> {
+  const products = await getProducts();
+  const related = products.filter((item) => item.id !== product.id);
+  const sameCategory = product.category
+    ? related.filter((item) => item.category === product.category)
+    : [];
+
+  return [
+    ...sameCategory,
+    ...related.filter((item) => !sameCategory.includes(item)),
+  ].slice(0, 8);
 }

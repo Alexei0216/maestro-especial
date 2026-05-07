@@ -4,6 +4,7 @@ export type StrapiProduct = {
   name: string;
   description: string;
   price?: number;
+  category?: string;
   image?: {
     id: number;
     url: string;
@@ -11,4 +12,11 @@ export type StrapiProduct = {
     width?: number;
     height?: number;
   };
+  gallery?: {
+    id: number;
+    url: string;
+    alternativeText?: string | null;
+    width?: number;
+    height?: number;
+  }[];
 };
