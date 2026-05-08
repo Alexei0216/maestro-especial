@@ -8,18 +8,27 @@ export default async function Service() {
   return (
     <Container>
       <section
-        className="py-12 max-w-[1400px]"
+        id="products"
+        className="animate-fade-up py-12 max-w-[1400px]"
         aria-labelledby="popular-products-title"
       >
-        <h2
-          id="popular-products-title"
-          className="text-3xl font-bold mb-8 text-center"
-        >
-          Los productos más populares
-        </h2>
+        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.14em] text-yellow-700">
+              Catalogo
+            </p>
+            <h2 id="popular-products-title" className="text-3xl font-bold">
+              Equipos destacados
+            </h2>
+          </div>
+          <p className="max-w-md text-sm leading-6 text-neutral-600">
+            Seleccion de equipos y soluciones recomendadas para climatizar con
+            eficiencia.
+          </p>
+        </div>
 
         {products.length === 0 ? (
-          <p>No products found</p>
+          <p>No hay productos disponibles</p>
         ) : (
           <div className="grid gap-8 grid-cols-[repeat(auto-fit,minmax(200px,260px))]">
             {products.map((product) => (

@@ -9,3 +9,96 @@
   display: none;
 }
 
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-cart {
+  from {
+    opacity: 0;
+    transform: translateX(32px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-menu {
+  from {
+    opacity: 0;
+    transform: translateX(-32px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes modal-zoom {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 600ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-fade-in {
+  animation: fade-in 240ms ease both;
+}
+
+.animate-slide-cart {
+  animation: slide-cart 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-slide-menu {
+  animation: slide-menu 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-modal-zoom {
+  animation: modal-zoom 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.motion-soft {
+  transition-duration: 220ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+  }
+}

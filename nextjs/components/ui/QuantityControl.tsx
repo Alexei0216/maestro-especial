@@ -1,13 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { useCart, type CartProduct } from "../cart/CartProvider";
 
 type QuantityControlProps = {
-  productName: string;
+  product: CartProduct;
 };
 
-export default function QuantityControl({ productName }: QuantityControlProps) {
+export default function QuantityControl({ product }: QuantityControlProps) {
   const [quantity, setQuantity] = useState(1);
+  const { addItem } = useCart();
 
   return (
     <div className="space-y-3">
@@ -19,7 +21,7 @@ export default function QuantityControl({ productName }: QuantityControlProps) {
         <div className="flex h-12 items-center rounded-lg border border-neutral-300 bg-white">
           <button
             type="button"
-            className="h-full w-11 text-xl text-neutral-700 transition hover:bg-neutral-100"
+            className="motion-soft h-full w-11 text-xl text-neutral-700 hover:bg-neutral-100 active:scale-95"
             onClick={() => setQuantity((value) => Math.max(1, value - 1))}
             aria-label="Reducir cantidad"
           >
@@ -38,7 +40,7 @@ export default function QuantityControl({ productName }: QuantityControlProps) {
           />
           <button
             type="button"
-            className="h-full w-11 text-xl text-neutral-700 transition hover:bg-neutral-100"
+            className="motion-soft h-full w-11 text-xl text-neutral-700 hover:bg-neutral-100 active:scale-95"
             onClick={() => setQuantity((value) => value + 1)}
             aria-label="Aumentar cantidad"
           >
@@ -48,8 +50,9 @@ export default function QuantityControl({ productName }: QuantityControlProps) {
 
         <button
           type="button"
-          className="h-12 flex-1 rounded-lg bg-yellow-500 px-6 font-bold text-black transition hover:bg-yellow-600 sm:flex-none"
-          aria-label={`Anadir ${productName} al carrito`}
+          className="motion-soft h-12 flex-1 rounded-lg bg-yellow-500 px-6 font-bold text-black hover:-translate-y-0.5 hover:bg-yellow-600 hover:shadow-lg sm:flex-none"
+          onClick={() => addItem(product, quantity)}
+          aria-label={`Anadir ${product.name} al carrito`}
         >
           Anadir al carrito
         </button>

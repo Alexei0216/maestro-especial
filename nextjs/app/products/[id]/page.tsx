@@ -83,51 +83,63 @@ export default async function ProductPage({ params }: ProductPageProps) {
       />
 
       <Container className="py-10 lg:py-14">
-        <section className="grid gap-2 lg:grid-cols-[128px_minmax(420px,680px)_minmax(260px,360px)] lg:items-start">
-          <div className="order-3 ml-auto space-y-6 lg:order-3 lg:sticky lg:top-8">
-            <div className="space-y-3">
-              {product.category && (
-                <p className="text-sm font-semibold uppercase tracking-[0.12em] text-yellow-700">
-                  {product.category}
-                </p>
-              )}
+        <section className="animate-fade-up relative grid gap-8 lg:grid-cols-[128px_minmax(420px,680px)_minmax(320px,1fr)] lg:items-start lg:gap-2">
+          <div className="order-3 flex items-start lg:order-3 lg:self-stretch lg:pl-14 xl:pl-20">
+            <aside className="w-full max-w-[380px] lg:sticky lg:top-8">
+              <div className="space-y-6">
+                <div className="space-y-3">
+                  {product.category && (
+                    <p className="text-sm font-semibold uppercase tracking-[0.12em] text-yellow-700">
+                      {product.category}
+                    </p>
+                  )}
 
-              <h1 className="text-4xl font-bold leading-tight sm:text-5xl">
-                {product.name}
-              </h1>
+                  <h1 className="text-4xl font-bold leading-tight sm:text-5xl">
+                    {product.name}
+                  </h1>
 
-              <p className="text-base leading-7 text-neutral-700">
-                {product.description}
-              </p>
-            </div>
+                  <p className="text-base leading-7 text-neutral-700">
+                    {product.description}
+                  </p>
+                </div>
 
-            <div className="space-y-4 border-y border-neutral-300 py-5">
-              <p className="text-3xl font-bold">{formattedPrice}</p>
-              <p className="text-sm text-neutral-600">
-                Disponible para pedido. Precio final confirmado antes del envio.
-              </p>
-            </div>
+                <div className="space-y-4 border-y border-neutral-300 py-5">
+                  <p className="text-3xl font-bold">{formattedPrice}</p>
+                  <p className="text-sm text-neutral-600">
+                    Disponible para pedido. Precio final confirmado antes del
+                    envio.
+                  </p>
+                </div>
 
-            <QuantityControl productName={product.name} />
+                <QuantityControl
+                  product={{
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.image,
+                  }}
+                />
 
-            <dl className="grid grid-cols-2 gap-3 text-sm">
-              <div>
-                <dt className="text-neutral-500">Categoria</dt>
-                <dd className="font-semibold">
-                  {product.category ?? "Producto especial"}
-                </dd>
+                <dl className="grid grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <dt className="text-neutral-500">Categoria</dt>
+                    <dd className="font-semibold">
+                      {product.category ?? "Producto especial"}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-neutral-500">Referencia</dt>
+                    <dd className="font-semibold">ME-{product.id}</dd>
+                  </div>
+                </dl>
               </div>
-              <div>
-                <dt className="text-neutral-500">Referencia</dt>
-                <dd className="font-semibold">ME-{product.id}</dd>
-              </div>
-            </dl>
+            </aside>
           </div>
 
           <ProductMedia images={galleryImages} name={product.name} />
         </section>
 
-        <section className="mt-14 border-t border-neutral-300 pt-10">
+        <section className="animate-fade-up mt-14 border-t border-neutral-300 pt-10">
           <div className="max-w-4xl">
             <h2 className="text-3xl font-bold">Descripcion del producto</h2>
             <p className="mt-5 text-lg leading-8 text-neutral-700">
@@ -139,7 +151,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
       {relatedProducts.length > 0 && (
         <section
-          className="overflow-hidden bg-white py-12"
+          className="animate-fade-up mx-auto overflow-hidden bg-white py-12"
           aria-labelledby="related-products-title"
         >
           <Container>

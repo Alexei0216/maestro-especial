@@ -18,7 +18,14 @@ export default function DraggableGallery({
 }: DraggableGalleryProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const dragState = useRef({ x: 0, y: 0, left: 0, top: 0 });
+  const dragState = useRef({
+    x: 0,
+    y: 0,
+    left: 0,
+    top: 0,
+    moved: false,
+    image: "",
+  });
 
   function startDrag(event: PointerEvent<HTMLDivElement>) {
     const element = scrollRef.current;
@@ -27,6 +34,10 @@ export default function DraggableGallery({
       return;
     }
 
+    const target = (event.target as HTMLElement).closest<HTMLButtonElement>(
+      "[data-gallery-image]",
+    );
+
     setIsDragging(true);
     element.setPointerCapture(event.pointerId);
     dragState.current = {
@@ -34,6 +45,8 @@ export default function DraggableGallery({
       y: event.clientY,
       left: element.scrollLeft,
       top: element.scrollTop,
+      moved: false,
+      image: target?.dataset.galleryImage ?? "",
     };
   }
 
@@ -44,18 +57,31 @@ export default function DraggableGallery({
       return;
     }
 
-    element.scrollLeft = dragState.current.left - (event.clientX - dragState.current.x);
-    element.scrollTop = dragState.current.top - (event.clientY - dragState.current.y);
+    const distanceX = event.clientX - dragState.current.x;
+    const distanceY = event.clientY - dragState.current.y;
+
+    if (Math.abs(distanceX) > 4 || Math.abs(distanceY) > 4) {
+      dragState.current.moved = true;
+    }
+
+    element.scrollLeft = dragState.current.left - distanceX;
+    element.scrollTop = dragState.current.top - distanceY;
   }
 
   function endDrag(event: PointerEvent<HTMLDivElement>) {
     const element = scrollRef.current;
+    const selectedImage = dragState.current.image;
+    const wasClick = !dragState.current.moved;
 
     if (element?.hasPointerCapture(event.pointerId)) {
       element.releasePointerCapture(event.pointerId);
     }
 
     setIsDragging(false);
+
+    if (wasClick && selectedImage) {
+      onSelect?.(selectedImage);
+    }
   }
 
   return (
@@ -74,12 +100,20 @@ export default function DraggableGallery({
         <button
           type="button"
           key={`${image}-${index}`}
-          onClick={() => onSelect?.(image)}
-          className={`relative h-28 w-24 shrink-0 overflow-hidden rounded-lg border bg-neutral-100 transition lg:h-36 lg:w-28 ${
+          data-gallery-image={image}
+          onClick={(event) => {
+            event.stopPropagation();
+
+            if (!dragState.current.moved) {
+              onSelect?.(image);
+            }
+          }}
+          className={`motion-soft relative h-28 w-24 shrink-0 overflow-hidden rounded-lg border bg-neutral-100 lg:h-36 lg:w-28 ${
             activeImage === image
-              ? "border-yellow-600 ring-2 ring-yellow-500"
-              : "border-neutral-200 hover:border-neutral-400"
+              ? "scale-[0.98] border-yellow-600 ring-2 ring-yellow-500"
+              : "border-neutral-200 hover:-translate-y-0.5 hover:border-neutral-400 hover:shadow-md"
           }`}
+          aria-current={activeImage === image}
           aria-label={`Mostrar imagen ${index + 1} de ${name}`}
         >
           <Image
@@ -88,7 +122,7 @@ export default function DraggableGallery({
             fill
             sizes="112px"
             unoptimized
-            className="object-cover"
+            className="object-cover motion-soft hover:scale-105"
             draggable={false}
           />
         </button>

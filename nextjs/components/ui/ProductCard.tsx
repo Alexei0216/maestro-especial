@@ -12,7 +12,7 @@ export default function ProductCard({
   image,
 }: ProductCardProps) {
   return (
-    <article className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition flex flex-col group h-full">
+    <article className="motion-soft bg-white rounded-lg overflow-hidden shadow-md hover:-translate-y-1 hover:shadow-xl flex flex-col group h-full">
       <Link
         href={`/products/${id}`}
         className="relative h-56 w-full overflow-hidden block"
@@ -25,14 +25,17 @@ export default function ProductCard({
             fill
             sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
             unoptimized
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="object-cover motion-soft group-hover:scale-105"
           />
         )}
       </Link>
 
       <div className="p-5 flex flex-col flex-1">
         <h3 className="text-lg font-semibold mb-2">
-          <Link href={`/products/${id}`} className="hover:text-yellow-700">
+          <Link
+            href={`/products/${id}`}
+            className="motion-soft hover:text-yellow-700"
+          >
             {name}
           </Link>
         </h3>
@@ -40,11 +43,11 @@ export default function ProductCard({
         <p className="text-sm text-gray-600 mb-4 line-clamp-2">{description}</p>
 
         <div className="mt-auto flex items-center justify-between gap-3">
-          <span className="text-xl font-bold text-black">€{price ?? "—"}</span>
+          <span className="text-xl font-bold text-black">{price ?? "-"} €</span>
 
           <Link
             href={`/products/${id}`}
-            className="bg-yellow-500 hover:bg-yellow-600 cursor-pointer transition text-black font-semibold px-5 py-2 rounded-lg"
+            className="motion-soft bg-yellow-500 hover:bg-yellow-600 hover:-translate-y-0.5 cursor-pointer text-black font-semibold px-5 py-2 rounded-lg"
           >
             Comprar
           </Link>
