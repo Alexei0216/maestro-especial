@@ -144,7 +144,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-40 bg-[#302400] text-white shadow-lg shadow-black/10">
-      <Container className="relative grid h-20 grid-cols-[auto_1fr_auto] items-center gap-4">
+      <Container className="relative grid h-18 grid-cols-[auto_1fr_auto] items-center gap-4">
         <button
           type="button"
           className="motion-soft flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/10 hover:-translate-y-0.5 hover:bg-white hover:text-[#302400] hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
