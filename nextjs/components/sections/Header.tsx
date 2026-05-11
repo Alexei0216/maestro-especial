@@ -147,7 +147,7 @@ export default function Header() {
       <Container className="relative grid h-18 grid-cols-[auto_1fr_auto] items-center gap-4">
         <button
           type="button"
-          className="motion-soft flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/10 hover:-translate-y-0.5 hover:bg-white hover:text-[#302400] hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+          className="motion-soft flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/10 hover:-translate-y-0.5 hover:bg-white hover:text-[#302400] hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 cursor-pointer"
           onClick={() => setIsMenuOpen(true)}
           aria-label="Abrir menu"
           aria-expanded={isMenuOpen}
@@ -162,7 +162,7 @@ export default function Header() {
           Maestro Especial
         </Link>
 
-        <div className="justify-self-end">
+        <div className="justify-self-end ">
           <CartButton />
         </div>
       </Container>

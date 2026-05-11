@@ -87,7 +87,7 @@ export default function CartModal() {
 
           <button
             type="button"
-            className="motion-soft flex h-10 w-10 items-center justify-center rounded-full border border-neutral-300 bg-white hover:scale-105 hover:bg-neutral-100"
+            className="motion-soft flex h-10 w-10 items-center justify-center rounded-full border border-neutral-300 bg-white hover:scale-105 hover:bg-neutral-100 cursor-pointer"
             onClick={closeCart}
             aria-label="Cerrar carrito"
           >
@@ -103,7 +103,7 @@ export default function CartModal() {
             </p>
             <button
               type="button"
-              className="motion-soft mt-7 rounded-lg bg-yellow-500 px-6 py-3 font-bold text-black hover:-translate-y-0.5 hover:bg-yellow-600 hover:shadow-lg"
+              className="motion-soft mt-7 rounded-lg bg-yellow-500 px-6 py-3 font-bold text-black hover:-translate-y-0.5 hover:bg-yellow-600 hover:shadow-lg cursor-pointer"
               onClick={closeCart}
             >
               Seguir comprando
@@ -141,7 +141,7 @@ export default function CartModal() {
                         </div>
                         <button
                           type="button"
-                          className="motion-soft text-sm font-semibold text-neutral-500 hover:text-red-700"
+                          className="motion-soft text-sm font-semibold text-neutral-500 hover:text-red-700 cursor-pointer"
                           onClick={() => removeItem(item.id)}
                         >
                           Quitar
@@ -152,7 +152,7 @@ export default function CartModal() {
                         <div className="flex h-10 items-center rounded-lg border border-neutral-300 bg-white">
                           <button
                             type="button"
-                            className="motion-soft h-full w-9 text-lg hover:bg-neutral-100 active:scale-95"
+                            className="motion-soft h-full w-9 text-lg hover:bg-neutral-100 active:scale-95 cursor-pointer"
                             onClick={() => updateQuantity(item.id, item.quantity - 1)}
                             aria-label="Reducir cantidad"
                           >
@@ -163,7 +163,7 @@ export default function CartModal() {
                           </span>
                           <button
                             type="button"
-                            className="motion-soft h-full w-9 text-lg hover:bg-neutral-100 active:scale-95"
+                            className="motion-soft h-full w-9 text-lg hover:bg-neutral-100 active:scale-95 cursor-pointer"
                             onClick={() => updateQuantity(item.id, item.quantity + 1)}
                             aria-label="Aumentar cantidad"
                           >
@@ -199,7 +199,7 @@ export default function CartModal() {
                 </Link>
                 <button
                   type="button"
-                  className="motion-soft rounded-lg border border-neutral-300 bg-white px-6 py-3 font-semibold hover:bg-neutral-100"
+                  className="motion-soft rounded-lg border border-neutral-300 bg-white px-6 py-3 font-semibold hover:bg-neutral-100 cursor-pointer"
                   onClick={closeCart}
                 >
                   Seguir comprando

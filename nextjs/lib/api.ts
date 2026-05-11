@@ -250,7 +250,7 @@ export async function getCategories(): Promise<Category[]> {
         image: mapMedia(cat.image),
         seo: mapSeo(cat.seo),
       })),
-      products: item.products?.map((prod) => ({
+      products: item.products?.map((prod: any) => ({
         id: prod.id,
         documentId: prod.documentId,
         name: prod.name,
@@ -316,7 +316,7 @@ export async function getCategory(slug: string): Promise<Category | undefined> {
       image: mapMedia(cat.image),
       seo: mapSeo(cat.seo),
     })),
-    products: item.products?.map((prod) => ({
+    products: item.products?.map((prod: any) => ({
       id: prod.id,
       documentId: prod.documentId,
       name: prod.name,

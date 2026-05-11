@@ -8,15 +8,40 @@ import { getProduct, getRelatedProducts } from "@/lib/api";
 
 type ProductPageProps = {
   params: Promise<{
-    id: string;
+    slug: string;
   }>;
+};
+
+const getPlainText = (value: unknown): string => {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+
+  const extractText = (item: unknown): string => {
+    if (!item) return "";
+    if (typeof item === "string") return item;
+    if (Array.isArray(item)) {
+      return item.map(extractText).join(" ");
+    }
+    if (typeof item === "object") {
+      const obj = item as Record<string, unknown>;
+      if (Array.isArray(obj.children)) {
+        return obj.children.map(extractText).join("");
+      }
+      if (typeof obj.text === "string") {
+        return obj.text;
+      }
+    }
+    return "";
+  };
+
+  return extractText(value).trim();
 };
 
 export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {
-  const { id } = await params;
-  const product = await getProduct(id);
+  const { slug } = await params;
+  const product = await getProduct(slug);
 
   if (!product) {
     return {
@@ -24,12 +49,14 @@ export async function generateMetadata({
     };
   }
 
+  const metadataDescription = getPlainText(product.description);
+
   return {
     title: `${product.name} | Maestro Especial`,
-    description: product.description,
+    description: metadataDescription,
     openGraph: {
       title: product.name,
-      description: product.description,
+      description: metadataDescription,
       images: product.thumbnail ? [product.thumbnail] : [],
       type: "website",
     },
@@ -37,8 +64,8 @@ export async function generateMetadata({
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
-  const { id } = await params;
-  const product = await getProduct(id);
+  const { slug } = await params;
+  const product = await getProduct(slug);
 
   if (!product) {
     notFound();
@@ -57,11 +84,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
           maximumFractionDigits: 0,
         }).format(product.price);
 
+  const productDescription = getPlainText(product.description);
+
   const productSchema = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
-    description: product.description,
+    description: productDescription,
     category: product.category,
     image: galleryImages,
     offers:
@@ -99,7 +128,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   </h1>
 
                   <p className="text-base leading-7 text-neutral-700">
-                    {product.description}
+                    {productDescription}
                   </p>
                 </div>
 
@@ -143,7 +172,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <div className="max-w-4xl">
             <h2 className="text-3xl font-bold">Descripcion del producto</h2>
             <p className="mt-5 text-lg leading-8 text-neutral-700">
-              {product.description}
+              {productDescription}
             </p>
           </div>
         </section>
