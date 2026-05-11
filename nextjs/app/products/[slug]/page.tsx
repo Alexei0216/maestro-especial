@@ -30,7 +30,7 @@ export async function generateMetadata({
     openGraph: {
       title: product.name,
       description: product.description,
-      images: product.image ? [product.image] : [],
+      images: product.thumbnail ? [product.thumbnail] : [],
       type: "website",
     },
   };
@@ -44,7 +44,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound();
   }
 
-  const galleryImages = [product.image, ...(product.gallery ?? [])].filter(
+  const galleryImages = [product.thumbnail, ...product.images].filter(
     (image): image is string => Boolean(image),
   );
   const relatedProducts = await getRelatedProducts(product);
@@ -90,7 +90,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 <div className="space-y-3">
                   {product.category && (
                     <p className="text-sm font-semibold uppercase tracking-[0.12em] text-yellow-700">
-                      {product.category}
+                      {product.category.name}
                     </p>
                   )}
 
@@ -116,7 +116,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                     id: product.id,
                     name: product.name,
                     price: product.price,
-                    image: product.image,
+                    image: product.thumbnail,
                   }}
                 />
 
@@ -124,7 +124,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   <div>
                     <dt className="text-neutral-500">Categoria</dt>
                     <dd className="font-semibold">
-                      {product.category ?? "Producto especial"}
+                      {product.category?.name ?? "Producto especial"}
                     </dd>
                   </div>
                   <div>
@@ -163,7 +163,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <div className="scrollbar-none mt-7 flex w-full gap-6 overflow-x-auto px-5 pb-2 sm:px-8 lg:px-15">
             {relatedProducts.map((item) => (
               <div key={item.id} className="w-[280px] shrink-0">
-                <ProductCard {...item} />
+                <ProductCard product={item} />
               </div>
             ))}
           </div>

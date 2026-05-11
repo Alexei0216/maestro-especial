@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_seo_shared_seos",
+  "info": {
+    "displayName": "shared.seo"
+  },
+  "options": {},
+  "attributes": {
+    "metaTitle": {
+      "type": "text"
+    },
+    "metaDescription": {
+      "type": "text"
+    },
+    "keywords": {
+      "type": "text"
+    },
+    "ogImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    }
+  },
+  "config": {}
+}

@@ -11,7 +11,7 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "Name": {
+    "name": {
       "type": "string",
       "required": true
     },
@@ -20,6 +20,41 @@
       "relation": "oneToMany",
       "target": "api::product.product",
       "mappedBy": "category"
+    },
+    "slug": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "categories": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::category.category",
+      "mappedBy": "parentCategory"
+    },
+    "parentCategory": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::category.category",
+      "inversedBy": "categories"
+    },
+    "seo": {
+      "type": "component",
+      "component": "seo.shared-seo",
+      "repeatable": true
+    },
+    "description": {
+      "type": "blocks"
     }
   }
 }

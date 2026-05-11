@@ -1,0 +1,47 @@
+{
+  "kind": "collectionType",
+  "collectionName": "product_variants",
+  "info": {
+    "singularName": "product-variant",
+    "pluralName": "product-variants",
+    "displayName": "Product variant"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "product": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::product.product",
+      "inversedBy": "product_variants"
+    },
+    "sku": {
+      "type": "string",
+      "required": false,
+      "unique": true
+    },
+    "price": {
+      "type": "decimal"
+    },
+    "stock": {
+      "type": "integer"
+    },
+    "attributes": {
+      "type": "component",
+      "component": "product.product-attribute",
+      "repeatable": true
+    },
+    "images": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    }
+  }
+}

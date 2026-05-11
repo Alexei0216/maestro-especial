@@ -1,0 +1,49 @@
+{
+  "kind": "collectionType",
+  "collectionName": "order_items",
+  "info": {
+    "singularName": "order-item",
+    "pluralName": "order-items",
+    "displayName": "Order item"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "order": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::order.order",
+      "inversedBy": "order_items"
+    },
+    "product": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::product.product",
+      "inversedBy": "order_item"
+    },
+    "productTitleSnapshot": {
+      "type": "string"
+    },
+    "productPriceSnapshot": {
+      "type": "decimal"
+    },
+    "productImageSnapshot": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "quantity": {
+      "type": "integer"
+    },
+    "selectedAttributes": {
+      "type": "json"
+    }
+  }
+}

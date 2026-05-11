@@ -33,7 +33,7 @@ export default async function Service() {
           <div className="grid gap-8 grid-cols-[repeat(auto-fit,minmax(200px,260px))]">
             {products.map((product) => (
               <div key={product.id}>
-                <ProductCard {...product} />
+                <ProductCard product={product} />
               </div>
             ))}
           </div>

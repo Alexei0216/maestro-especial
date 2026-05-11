@@ -15,15 +15,11 @@
       "type": "string",
       "required": true
     },
-    "description": {
-      "type": "text",
-      "required": true
-    },
     "price": {
-      "type": "integer",
+      "type": "decimal",
       "required": true
     },
-    "image": {
+    "thumbnail": {
       "type": "media",
       "multiple": false,
       "required": true,
@@ -34,7 +30,7 @@
         "audios"
       ]
     },
-    "gallery": {
+    "images": {
       "type": "media",
       "multiple": true,
       "required": true,
@@ -52,7 +48,54 @@
       "inversedBy": "products"
     },
     "stock": {
-      "type": "integer"
+      "type": "integer",
+      "required": true
+    },
+    "sku": {
+      "type": "string",
+      "unique": true
+    },
+    "slug": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "shortDescription": {
+      "type": "string"
+    },
+    "oldPrice": {
+      "type": "decimal"
+    },
+    "attributes": {
+      "type": "component",
+      "component": "product.product-attribute",
+      "repeatable": true
+    },
+    "seo": {
+      "type": "component",
+      "component": "seo.shared-seo",
+      "repeatable": true
+    },
+    "product_variants": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::product-variant.product-variant",
+      "mappedBy": "product"
+    },
+    "order_item": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::order-item.order-item",
+      "mappedBy": "product"
+    },
+    "reviews": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::review.review",
+      "mappedBy": "product"
+    },
+    "description": {
+      "type": "blocks"
     }
   }
 }
