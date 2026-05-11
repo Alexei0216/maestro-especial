@@ -21,7 +21,7 @@ export default function QuantityControl({ product }: QuantityControlProps) {
         <div className="flex h-12 items-center rounded-lg border border-neutral-300 bg-white">
           <button
             type="button"
-            className="motion-soft h-full w-11 text-xl text-neutral-700 hover:bg-neutral-100 active:scale-95"
+            className="motion-soft h-full w-11 text-xl text-neutral-700 hover:bg-neutral-100 active:scale-95 cursor-pointer"
             onClick={() => setQuantity((value) => Math.max(1, value - 1))}
             aria-label="Reducir cantidad"
           >
@@ -40,7 +40,7 @@ export default function QuantityControl({ product }: QuantityControlProps) {
           />
           <button
             type="button"
-            className="motion-soft h-full w-11 text-xl text-neutral-700 hover:bg-neutral-100 active:scale-95"
+            className="motion-soft h-full w-11 text-xl text-neutral-700 hover:bg-neutral-100 active:scale-95 cursor-pointer"
             onClick={() => setQuantity((value) => value + 1)}
             aria-label="Aumentar cantidad"
           >
@@ -50,7 +50,7 @@ export default function QuantityControl({ product }: QuantityControlProps) {
 
         <button
           type="button"
-          className="motion-soft h-12 flex-1 rounded-lg bg-yellow-500 px-6 font-bold text-black hover:-translate-y-0.5 hover:bg-yellow-600 hover:shadow-lg sm:flex-none"
+          className="motion-soft h-12 flex-1 rounded-lg bg-yellow-500 px-6 font-bold text-black hover:-translate-y-0.5 hover:bg-yellow-600 hover:shadow-lg sm:flex-none cursor-pointer"
           onClick={() => addItem(product, quantity)}
           aria-label={`Anadir ${product.name} al carrito`}
         >
