@@ -21,10 +21,6 @@ export default async function Service() {
               Equipos destacados
             </h2>
           </div>
-          <p className="max-w-md text-sm leading-6 text-neutral-600">
-            Seleccion de equipos y soluciones recomendadas para climatizar con
-            eficiencia.
-          </p>
         </div>
 
         {products.length === 0 ? (
