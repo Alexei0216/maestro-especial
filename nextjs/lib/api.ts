@@ -123,11 +123,34 @@ export function buildStrapiQuery(searchParams: Record<string, string | string[] 
   const maxPrice = typeof searchParams.maxPrice === 'string' ? searchParams.maxPrice : undefined;
   const category = typeof searchParams.category === 'string' ? searchParams.category : undefined;
   const sort = typeof searchParams.sort === 'string' ? searchParams.sort : undefined;
+  const sizes = typeof searchParams.sizes === 'string' ? searchParams.sizes.split(',') : [];
+  const types = typeof searchParams.types === 'string' ? searchParams.types.split(',') : [];
 
   if (minPrice) params.append("filters[price][$gte]", minPrice);
   if (maxPrice) params.append("filters[price][$lte]", maxPrice);
 
   if (category) params.append("filters[category][slug][$eq]", category);
+
+  // Filter by attributes (sizes and types)
+  if (sizes.length > 0 || types.length > 0) {
+    const attributeFilters: string[] = [];
+
+    sizes.forEach(size => {
+      attributeFilters.push(`filters[attributes][name][$eq]=size&filters[attributes][value][$eq]=${encodeURIComponent(size)}`);
+      attributeFilters.push(`filters[attributes][name][$eq]=размер&filters[attributes][value][$eq]=${encodeURIComponent(size)}`);
+    });
+
+    types.forEach(type => {
+      attributeFilters.push(`filters[attributes][name][$eq]=type&filters[attributes][value][$eq]=${encodeURIComponent(type)}`);
+      attributeFilters.push(`filters[attributes][name][$eq]=тип&filters[attributes][value][$eq]=${encodeURIComponent(type)}`);
+    });
+
+    // Note: Strapi doesn't support complex OR queries easily in URL params
+    // This is a simplified approach - in production you might need custom API endpoints
+    if (attributeFilters.length > 0) {
+      params.append("filters[$or]", attributeFilters.join('&'));
+    }
+  }
 
   if (sort === "price_asc") params.append("sort", "price:asc");
   if (sort === "price_desc") params.append("sort", "price:desc");
@@ -300,6 +323,28 @@ export async function getCategories(): Promise<Category[]> {
       })),
     })
   );
+}
+
+export async function getProductAttributes(): Promise<{
+  sizes: Array<{ id: string; name: string }>;
+  types: Array<{ id: string; name: string }>;
+}> {
+  // For demonstration, return some sample data
+  // In a real application, you would fetch this from Strapi
+  const sizes = [
+    { id: 'size_s', name: 'S' },
+    { id: 'size_m', name: 'M' },
+    { id: 'size_l', name: 'L' },
+    { id: 'size_xl', name: 'XL' }
+  ];
+
+  const types = [
+    { id: 'type_casual', name: 'Casual' },
+    { id: 'type_formal', name: 'Formal' },
+    { id: 'type_sport', name: 'Sport' }
+  ];
+
+  return { sizes, types };
 }
 
 export async function getCategory(slug: string): Promise<Category | undefined> {

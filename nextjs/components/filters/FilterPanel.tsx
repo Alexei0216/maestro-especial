@@ -1,47 +1,111 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 
 interface FilterPanelProps {
   categories: Array<{ id: number; name: string; slug: string }>;
   maxPrice?: number;
+  attributes?: {
+    sizes: Array<{ id: string; name: string }>;
+    types: Array<{ id: string; name: string }>;
+  };
 }
 
-export default function FilterPanel({ categories, maxPrice = 10000 }: FilterPanelProps) {
+export default function FilterPanel({
+  categories,
+  maxPrice = 10000,
+  attributes = { sizes: [], types: [] }
+}: FilterPanelProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   // Get current filter values from URL
-  const currentMinPrice = searchParams.get("minPrice") || "0";
-  const currentMaxPrice = searchParams.get("maxPrice") || maxPrice.toString();
+  const minPriceQuery = Number(searchParams.get("minPrice"));
+  const maxPriceQuery = Number(searchParams.get("maxPrice"));
   const currentCategory = searchParams.get("category") || "";
   const currentSort = searchParams.get("sort") || "";
+  const currentSizes = searchParams.get("sizes")?.split(",").filter(Boolean) || [];
+  const currentTypes = searchParams.get("types")?.split(",").filter(Boolean) || [];
 
-  const [minPrice, setMinPrice] = useState(currentMinPrice);
-  const [maxPrice_, setMaxPrice] = useState(currentMaxPrice);
+  const initialMinPrice = Number.isFinite(minPriceQuery) && minPriceQuery >= 0 ? minPriceQuery : 0;
+  const initialMaxPrice = Number.isFinite(maxPriceQuery) && maxPriceQuery >= 0 ? maxPriceQuery : maxPrice;
+
+  const [priceRange, setPriceRange] = useState<[number, number]>([
+    Math.min(initialMinPrice, initialMaxPrice),
+    Math.max(initialMinPrice, initialMaxPrice),
+  ]);
   const [category, setCategory] = useState(currentCategory);
   const [sort, setSort] = useState(currentSort);
+  const [selectedSizes, setSelectedSizes] = useState<string[]>(currentSizes);
+  const [selectedTypes, setSelectedTypes] = useState<string[]>(currentTypes);
+  const [activeHandle, setActiveHandle] = useState<"min" | "max" | null>(null);
+  const trackRef = useRef<HTMLDivElement | null>(null);
+
+  const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+  const snapValue = (value: number) => Math.round(value / 100) * 100;
+  const valueFromPosition = (clientX: number) => {
+    if (!trackRef.current) return 0;
+    const rect = trackRef.current.getBoundingClientRect();
+    const percent = (clientX - rect.left) / rect.width;
+    return clamp(snapValue(percent * maxPrice), 0, maxPrice);
+  };
+
+  useEffect(() => {
+    if (!activeHandle) return;
+
+    const handleMove = (event: MouseEvent | TouchEvent) => {
+      const clientX = 'touches' in event ? event.touches[0]?.clientX : event.clientX;
+      if (clientX === undefined) return;
+      const nextValue = valueFromPosition(clientX);
+
+      setPriceRange(([currentMin, currentMax]) => {
+        if (activeHandle === "min") {
+          const nextMin = Math.min(nextValue, currentMax);
+          return [clamp(nextMin, 0, currentMax), currentMax];
+        }
+        const nextMax = Math.max(nextValue, currentMin);
+        return [currentMin, clamp(nextMax, currentMin, maxPrice)];
+      });
+    };
+
+    const stopDragging = () => setActiveHandle(null);
+
+    document.addEventListener("mousemove", handleMove);
+    document.addEventListener("touchmove", handleMove, { passive: false } as EventListenerOptions);
+    document.addEventListener("mouseup", stopDragging);
+    document.addEventListener("touchend", stopDragging);
+
+    return () => {
+      document.removeEventListener("mousemove", handleMove);
+      document.removeEventListener("touchmove", handleMove as EventListener);
+      document.removeEventListener("mouseup", stopDragging);
+      document.removeEventListener("touchend", stopDragging);
+    };
+  }, [activeHandle, maxPrice]);
 
   // Apply filters
   const applyFilters = useCallback(() => {
     const params = new URLSearchParams();
 
-    if (minPrice && minPrice !== "0") params.append("minPrice", minPrice);
-    if (maxPrice_ && maxPrice_ !== maxPrice.toString()) params.append("maxPrice", maxPrice_);
+    if (priceRange[0] > 0) params.append("minPrice", priceRange[0].toString());
+    if (priceRange[1] < maxPrice) params.append("maxPrice", priceRange[1].toString());
     if (category) params.append("category", category);
     if (sort) params.append("sort", sort);
+    if (selectedSizes.length > 0) params.append("sizes", selectedSizes.join(","));
+    if (selectedTypes.length > 0) params.append("types", selectedTypes.join(","));
 
     const queryString = params.toString();
     router.push(`/catalog${queryString ? "?" + queryString : ""}`);
-  }, [minPrice, maxPrice_, category, sort, maxPrice, router]);
+  }, [priceRange, category, sort, selectedSizes, selectedTypes, maxPrice, router]);
 
   // Reset filters
   const resetFilters = useCallback(() => {
-    setMinPrice("0");
-    setMaxPrice(maxPrice.toString());
+    setPriceRange([0, maxPrice]);
     setCategory("");
     setSort("");
+    setSelectedSizes([]);
+    setSelectedTypes([]);
     router.push("/catalog");
   }, [maxPrice, router]);
 
@@ -52,29 +116,48 @@ export default function FilterPanel({ categories, maxPrice = 10000 }: FilterPane
 
         {/* Price Range Filter */}
         <div className="mb-6 pb-6 border-b border-gray-200">
-          <h3 className="font-medium text-gray-800 mb-4 text-sm uppercase tracking-wide">Цена</h3>
-          <div className="space-y-3">
-            <div>
-              <label className="block text-xs text-gray-600 mb-2 font-medium">От (₽)</label>
-              <input
-                type="number"
-                value={minPrice}
-                onChange={(e) => setMinPrice(e.target.value)}
-                min="0"
-                max={maxPrice}
-                className="w-full px-3 py-2.5 border border-gray-200 rounded-md text-sm motion-soft focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+          <h3 className="font-medium text-gray-800 mb-4 text-sm uppercase tracking-wide">
+            Цена
+          </h3>
+
+          <div className="px-1 space-y-4">
+            <div className="relative h-12" ref={trackRef}>
+              <div className="absolute inset-x-0 top-1/2 h-2 -translate-y-1/2 rounded-full bg-gray-200" />
+              <div
+                className="absolute top-1/2 h-2 -translate-y-1/2 rounded-full bg-yellow-500"
+                style={{
+                  left: `${(priceRange[0] / maxPrice) * 100}%`,
+                  width: `${((priceRange[1] - priceRange[0]) / maxPrice) * 100}%`,
+                }}
+              />
+
+              <button
+                type="button"
+                aria-label="Минимальная цена"
+                onMouseDown={() => setActiveHandle("min")}
+                onTouchStart={() => setActiveHandle("min")}
+                className="pointer-events-auto absolute top-1/2 h-5 w-5 -translate-y-1/2 -translate-x-1/2 rounded-full border-2 border-white bg-yellow-500 shadow focus:outline-none"
+                style={{ left: `${(priceRange[0] / maxPrice) * 100}%` }}
+              />
+              <button
+                type="button"
+                aria-label="Максимальная цена"
+                onMouseDown={() => setActiveHandle("max")}
+                onTouchStart={() => setActiveHandle("max")}
+                className="pointer-events-auto absolute top-1/2 h-5 w-5 -translate-y-1/2 -translate-x-1/2 rounded-full border-2 border-white bg-yellow-500 shadow focus:outline-none"
+                style={{ left: `${(priceRange[1] / maxPrice) * 100}%` }}
               />
             </div>
-            <div>
-              <label className="block text-xs text-gray-600 mb-2 font-medium">До (₽)</label>
-              <input
-                type="number"
-                value={maxPrice_}
-                onChange={(e) => setMaxPrice(e.target.value)}
-                min="0"
-                max={maxPrice}
-                className="w-full px-3 py-2.5 border border-gray-200 rounded-md text-sm motion-soft focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-              />
+
+            <div className="grid grid-cols-2 gap-3 text-sm text-gray-700 font-medium">
+              <div className="space-y-1">
+                <div className="text-xs text-gray-500">Мин.</div>
+                <div>{priceRange[0].toLocaleString()} ₽</div>
+              </div>
+              <div className="space-y-1 text-right">
+                <div className="text-xs text-gray-500">Макс.</div>
+                <div>{priceRange[1].toLocaleString()} ₽</div>
+              </div>
             </div>
           </div>
         </div>
@@ -126,6 +209,58 @@ export default function FilterPanel({ categories, maxPrice = 10000 }: FilterPane
             <option value="price_desc">Цена: от высокой к низкой</option>
           </select>
         </div>
+
+        {/* Size Filter */}
+        {attributes.sizes.length > 0 && (
+          <div className="mb-6">
+            <h3 className="font-medium text-gray-800 mb-4 text-sm uppercase tracking-wide">Размер</h3>
+            <div className="space-y-2">
+              {attributes.sizes.map((size) => (
+                <label key={size.id} className="flex items-center cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={selectedSizes.includes(size.id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedSizes([...selectedSizes, size.id]);
+                      } else {
+                        setSelectedSizes(selectedSizes.filter(id => id !== size.id));
+                      }
+                    }}
+                    className="w-4 h-4 text-yellow-600 border-gray-300 rounded focus:ring-yellow-500 cursor-pointer"
+                  />
+                  <span className="text-sm text-gray-700 ml-3 group-hover:text-gray-900 motion-soft">{size.name}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Type Filter */}
+        {attributes.types.length > 0 && (
+          <div className="mb-6">
+            <h3 className="font-medium text-gray-800 mb-4 text-sm uppercase tracking-wide">Тип</h3>
+            <div className="space-y-2">
+              {attributes.types.map((type) => (
+                <label key={type.id} className="flex items-center cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={selectedTypes.includes(type.id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedTypes([...selectedTypes, type.id]);
+                      } else {
+                        setSelectedTypes(selectedTypes.filter(id => id !== type.id));
+                      }
+                    }}
+                    className="w-4 h-4 text-yellow-600 border-gray-300 rounded focus:ring-yellow-500 cursor-pointer"
+                  />
+                  <span className="text-sm text-gray-700 ml-3 group-hover:text-gray-900 motion-soft">{type.name}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Action Buttons */}
         <div className="space-y-2 pt-2">

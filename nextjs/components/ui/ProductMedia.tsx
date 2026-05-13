@@ -3,64 +3,13 @@
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { CloseIcon, ChevronLeftIcon, ChevronRightIcon } from "../icons";
 import DraggableGallery from "./DraggableGallery";
 
 type ProductMediaProps = {
   images: string[];
   name: string;
 };
-
-function CloseIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      className="h-5 w-5"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2.2"
-      viewBox="0 0 24 24"
-    >
-      <path d="M18 6 6 18" />
-      <path d="m6 6 12 12" />
-    </svg>
-  );
-}
-
-function ChevronLeftIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      className="h-7 w-7"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2.1"
-      viewBox="0 0 24 24"
-    >
-      <path d="m15 18-6-6 6-6" />
-    </svg>
-  );
-}
-
-function ChevronRightIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      className="h-7 w-7"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2.1"
-      viewBox="0 0 24 24"
-    >
-      <path d="m9 18 6-6-6-6" />
-    </svg>
-  );
-}
 
 export default function ProductMedia({ images, name }: ProductMediaProps) {
   const [activeImage, setActiveImage] = useState(images[0]);
@@ -156,7 +105,7 @@ export default function ProductMedia({ images, name }: ProductMediaProps) {
             }}
             aria-label="Cerrar imagen ampliada"
           >
-            <CloseIcon />
+            <CloseIcon className="h-4 w-4" />
           </button>
 
           {images.length > 1 && (
@@ -169,7 +118,7 @@ export default function ProductMedia({ images, name }: ProductMediaProps) {
               }}
               aria-label="Imagen anterior"
             >
-              <ChevronLeftIcon />
+              <ChevronLeftIcon className="h-5 w-5" />
             </button>
           )}
 
@@ -197,7 +146,7 @@ export default function ProductMedia({ images, name }: ProductMediaProps) {
               }}
               aria-label="Imagen siguiente"
             >
-              <ChevronRightIcon />
+              <ChevronRightIcon className="h-5 w-5" />
             </button>
           )}
         </div>,

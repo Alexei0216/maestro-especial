@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getProducts, getCategories } from "../../lib/api";
+import { getProducts, getCategories, getProductAttributes } from "../../lib/api";
 import ProductCard from "../../components/ui/ProductCard";
 import Container from "../../components/layouts/Container";
 import Section from "../../components/layouts/Section";
@@ -17,9 +17,10 @@ interface CatalogPageProps {
 export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   const params = await searchParams;
   
-  const [products, categories] = await Promise.all([
+  const [products, categories, attributes] = await Promise.all([
     getProducts(params),
     getCategories(),
+    getProductAttributes(),
   ]);
 
   return (
@@ -29,7 +30,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
 
         <div className="flex flex-col md:flex-row gap-6">
           {/* Filters Panel */}
-          <FilterPanel categories={categories} />
+          <FilterPanel categories={categories} attributes={attributes} />
 
           {/* Products Section */}
           <div className="flex-1">

@@ -3,25 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
+import { CloseIcon } from "../icons";
 import { useCart } from "./CartProvider";
-
-function CloseIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      className="h-5 w-5"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-      viewBox="0 0 24 24"
-    >
-      <path d="M18 6 6 18" />
-      <path d="m6 6 12 12" />
-    </svg>
-  );
-}
 
 function formatPrice(price: number) {
   return new Intl.NumberFormat("es-ES", {
@@ -91,7 +74,7 @@ export default function CartModal() {
             onClick={closeCart}
             aria-label="Cerrar carrito"
           >
-            <CloseIcon />
+            <CloseIcon className="h-4 w-4" />
           </button>
         </div>
 

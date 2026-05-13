@@ -4,120 +4,14 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import CartButton from "../cart/CartButton";
 import Container from "../layouts/Container";
+import { MenuIcon, CloseIcon, MenuLinkIcon, ChevronRightIcon } from "../icons";
 
 const menuLinks = [
   { href: "/", label: "Inicio", icon: "home" },
   { href: "/catalog", label: "Catalogo", icon: "catalog" },
   { href: "/contact", label: "Contacto", icon: "contact" },
   { href: "/checkout", label: "Checkout", icon: "checkout" },
-];
-
-function MenuIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      className="h-6 w-6"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-      viewBox="0 0 24 24"
-    >
-      <path d="M4 7h16" />
-      <path d="M4 12h16" />
-      <path d="M4 17h16" />
-    </svg>
-  );
-}
-
-function CloseIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      className="h-5 w-5"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-      viewBox="0 0 24 24"
-    >
-      <path d="M18 6 6 18" />
-      <path d="m6 6 12 12" />
-    </svg>
-  );
-}
-
-function MenuLinkIcon({ icon }: { icon: string }) {
-  const commonProps = {
-    "aria-hidden": true,
-    className: "h-5 w-5",
-    fill: "none",
-    stroke: "currentColor",
-    strokeLinecap: "round" as const,
-    strokeLinejoin: "round" as const,
-    strokeWidth: "2",
-    viewBox: "0 0 24 24",
-  };
-
-  if (icon === "catalog") {
-    return (
-      <svg {...commonProps}>
-        <path d="M4 5h16" />
-        <path d="M4 12h16" />
-        <path d="M4 19h16" />
-        <path d="M8 5v14" />
-      </svg>
-    );
-  }
-
-  if (icon === "contact") {
-    return (
-      <svg {...commonProps}>
-        <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
-        <path d="M8 9h8" />
-        <path d="M8 13h5" />
-      </svg>
-    );
-  }
-
-  if (icon === "checkout") {
-    return (
-      <svg {...commonProps}>
-        <path d="M6 6h15l-1.5 9h-12z" />
-        <path d="M6 6 5 3H2" />
-        <path d="M9 20h.01" />
-        <path d="M18 20h.01" />
-      </svg>
-    );
-  }
-
-  return (
-    <svg {...commonProps}>
-      <path d="m3 11 9-8 9 8" />
-      <path d="M5 10v10h14V10" />
-      <path d="M9 20v-6h6v6" />
-    </svg>
-  );
-}
-
-function ChevronRightIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      className="h-7 w-7"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2.1"
-      viewBox="0 0 24 24"
-    >
-      <path d="m9 18 6-6-6-6" />
-    </svg>
-  );
-}
+] as const;
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -191,7 +85,7 @@ export default function Header() {
                 onClick={() => setIsMenuOpen(false)}
                 aria-label="Cerrar menu"
               >
-                <CloseIcon />
+                <CloseIcon className="h-4 w-4" />
               </button>
             </div>
 
@@ -206,7 +100,7 @@ export default function Header() {
                     >
                       <span className="flex items-center gap-3">
                         <span className="motion-soft flex h-10 w-10 items-center justify-center rounded-lg bg-yellow-500/20 text-yellow-800 group-hover:bg-yellow-500 group-hover:text-black">
-                          <MenuLinkIcon icon={link.icon} />
+                          <MenuLinkIcon icon={link.icon} className="h-6 w-6" />
                         </span>
                         {link.label}
                       </span>

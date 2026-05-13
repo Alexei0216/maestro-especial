@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Container from "../layouts/Container";
+import { ChevronRightIcon } from "../icons"
 
 const categories = [
   {
@@ -102,7 +103,7 @@ export default function HomeStorefront() {
 
       <section className="animate-fade-up py-10">
         <div className="grid gap-8 rounded-lg bg-[#302400] p-6 text-white lg:grid-cols-[0.9fr_1.1fr] lg:p-8">
-          <div>
+          <div className="flex flex-col gap-4">
             <p className="text-sm font-semibold uppercase tracking-[0.14em] text-yellow-400">
               Servicios
             </p>
@@ -117,15 +118,22 @@ export default function HomeStorefront() {
 
           <div className="grid gap-4">
             {services.map((service) => (
-              <article
-                key={service.title}
-                className="motion-soft rounded-lg border border-white/10 bg-white/10 p-5 hover:-translate-y-0.5 hover:bg-white/15"
-              >
-                <h3 className="text-xl font-bold">{service.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-white/70">
-                  {service.description}
-                </p>
-              </article>
+              <Link href={"/"}>
+                <article
+                  key={service.title}
+                  className="motion-soft rounded-lg border border-white/10 bg-white/10 p-5 hover:-translate-y-0.5 hover:bg-white/15 flex items-center justify-between"
+                >
+                  <div className="">
+                    <h3 className="text-xl font-bold">{service.title}</h3>
+                    <p className="mt-2 text-sm leading-6 text-white/70">
+                      {service.description}
+                    </p>
+                  </div>
+                  <div className="">
+                    <ChevronRightIcon />
+                  </div>
+                </article>
+              </Link>
             ))}
           </div>
         </div>
