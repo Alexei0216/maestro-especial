@@ -115,10 +115,35 @@ function mapAddress(address?: StrapiAddress[]): Order["shippingAddress"] | undef
   };
 }
 
+// Helper function to build Strapi query from URL search params
+export function buildStrapiQuery(searchParams: Record<string, string | string[] | undefined>): string {
+  const params = new URLSearchParams();
+
+  const minPrice = typeof searchParams.minPrice === 'string' ? searchParams.minPrice : undefined;
+  const maxPrice = typeof searchParams.maxPrice === 'string' ? searchParams.maxPrice : undefined;
+  const category = typeof searchParams.category === 'string' ? searchParams.category : undefined;
+  const sort = typeof searchParams.sort === 'string' ? searchParams.sort : undefined;
+
+  if (minPrice) params.append("filters[price][$gte]", minPrice);
+  if (maxPrice) params.append("filters[price][$lte]", maxPrice);
+
+  if (category) params.append("filters[category][slug][$eq]", category);
+
+  if (sort === "price_asc") params.append("sort", "price:asc");
+  if (sort === "price_desc") params.append("sort", "price:desc");
+  if (sort === "newest") params.append("sort", "createdAt:desc");
+
+  params.append("populate", "*");
+
+  return params.toString();
+}
+
 // Products
-export async function getProducts(): Promise<Product[]> {
+export async function getProducts(searchParams?: Record<string, string | string[] | undefined>): Promise<Product[]> {
+  const queryString = searchParams ? buildStrapiQuery(searchParams) : "populate=*";
+  
   const res = await fetch(
-    `${SERVER_API_URL}/api/products?populate=*`,
+    `${SERVER_API_URL}/api/products?${queryString}`,
     {
       cache: "no-store",
     }
