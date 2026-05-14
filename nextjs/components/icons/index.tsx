@@ -14,7 +14,7 @@ export function MenuIcon(props: IconProps) {
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth="2.2"
-      className="h-7 w-7"
+      className="h-5 w-5"
       {...props}
     >
       <path d="M4 7h16" />
@@ -34,7 +34,7 @@ export function CloseIcon(props: IconProps) {
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth="2.2"
-      className="h-7 w-7"
+      className="h-5 w-5"
       {...props}
     >
       <path d="M18 6 6 18" />
@@ -53,7 +53,7 @@ export function CartIcon(props: IconProps) {
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth="2.2"
-      className="h-7 w-7"
+      className="h-5 w-5"
       {...props}
     >
       <path d="M6 6h15l-1.5 9h-12z" />
@@ -74,7 +74,7 @@ export function ChevronLeftIcon(props: IconProps) {
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth="2.2"
-      className="h-7 w-7"
+      className="h-5 w-5"
       {...props}
     >
       <path d="m15 18-6-6 6-6" />
@@ -92,7 +92,7 @@ export function ChevronRightIcon(props: IconProps) {
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth="2.2"
-      className="h-7 w-7"
+      className="h-5 w-5"
       {...props}
     >
       <path d="m9 18 6-6-6-6" />
@@ -110,7 +110,7 @@ export function CatalogIcon(props: IconProps) {
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth="2.2"
-      className="h-7 w-7"
+      className="h-5 w-5"
       {...props}
     >
       <path d="M4 7h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Z" />
@@ -130,7 +130,7 @@ export function ContactIcon(props: IconProps) {
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth="2.2"
-      className="h-7 w-7"
+      className="h-5 w-5"
       {...props}
     >
       <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
@@ -150,7 +150,7 @@ export function CheckoutIcon(props: IconProps) {
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth="2.2"
-      className="h-7 w-7"
+      className="h-5 w-5"
       {...props}
     >
       <rect x="3" y="8" width="18" height="10" rx="2" />

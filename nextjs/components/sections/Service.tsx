@@ -3,7 +3,7 @@ import { getProducts } from "../../lib/api";
 import Container from "../layouts/Container";
 
 export default async function Service() {
-  const products = await getProducts();
+  const { products } = await getProducts({ pageSize: "8" });
 
   return (
     <Container>

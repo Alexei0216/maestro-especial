@@ -10,7 +10,7 @@
   StrapiOrderItem,
   StrapiAddress,
 } from "../types/strapi";
-import { Product, Category, Order } from "../types/product";
+import { Product, Category, Order, PaginatedProducts } from "../types/product";
 
 const SERVER_API_URL =
   process.env.STRAPI_API_URL ??
@@ -119,52 +119,109 @@ function mapAddress(address?: StrapiAddress[]): Order["shippingAddress"] | undef
 export function buildStrapiQuery(searchParams: Record<string, string | string[] | undefined>): string {
   const params = new URLSearchParams();
 
-  const minPrice = typeof searchParams.minPrice === 'string' ? searchParams.minPrice : undefined;
-  const maxPrice = typeof searchParams.maxPrice === 'string' ? searchParams.maxPrice : undefined;
-  const category = typeof searchParams.category === 'string' ? searchParams.category : undefined;
-  const sort = typeof searchParams.sort === 'string' ? searchParams.sort : undefined;
-  const sizes = typeof searchParams.sizes === 'string' ? searchParams.sizes.split(',') : [];
-  const types = typeof searchParams.types === 'string' ? searchParams.types.split(',') : [];
+  // Validate and sanitize parameters
+  const minPrice = typeof searchParams.minPrice === 'string' && !isNaN(Number(searchParams.minPrice))
+    ? searchParams.minPrice : undefined;
+  const maxPrice = typeof searchParams.maxPrice === 'string' && !isNaN(Number(searchParams.maxPrice))
+    ? searchParams.maxPrice : undefined;
+  const categories = typeof searchParams.categories === 'string'
+    ? searchParams.categories.split(',').filter(Boolean) : [];
+  const sort = typeof searchParams.sort === 'string' && searchParams.sort.trim() !== ''
+    ? searchParams.sort : undefined;
+  const sizes = typeof searchParams.sizes === 'string'
+    ? [searchParams.sizes].filter(Boolean) : [];
+  const types = typeof searchParams.types === 'string'
+    ? [searchParams.types].filter(Boolean) : [];
+  const search = typeof searchParams.search === 'string' && searchParams.search.trim() !== ''
+    ? searchParams.search.trim() : undefined;
+  const page = (typeof searchParams.page === 'string' && !isNaN(Number(searchParams.page)))
+    || (typeof searchParams['pagination[page]'] === 'string' && !isNaN(Number(searchParams['pagination[page]'])))
+    ? (searchParams.page || searchParams['pagination[page]']) : '1';
+  const pageSize = (typeof searchParams.pageSize === 'string' && !isNaN(Number(searchParams.pageSize)))
+    || (typeof searchParams['pagination[pageSize]'] === 'string' && !isNaN(Number(searchParams['pagination[pageSize]'])))
+    ? (searchParams.pageSize || searchParams['pagination[pageSize]']) : '12';
+
+  console.log("Parsed search params:", { minPrice, maxPrice, categories, sort, search, page, pageSize });
 
   if (minPrice) params.append("filters[price][$gte]", minPrice);
   if (maxPrice) params.append("filters[price][$lte]", maxPrice);
 
-  if (category) params.append("filters[category][slug][$eq]", category);
+  // Categories filter - multiple selection using slug or id markers
+  const categorySlugs: string[] = [];
+  const categoryIds: string[] = [];
 
-  // Filter by attributes (sizes and types)
-  if (sizes.length > 0 || types.length > 0) {
-    const attributeFilters: string[] = [];
+  categories.forEach((cat) => {
+    if (!cat || typeof cat !== 'string') return;
 
-    sizes.forEach(size => {
-      attributeFilters.push(`filters[attributes][name][$eq]=size&filters[attributes][value][$eq]=${encodeURIComponent(size)}`);
-      attributeFilters.push(`filters[attributes][name][$eq]=размер&filters[attributes][value][$eq]=${encodeURIComponent(size)}`);
-    });
-
-    types.forEach(type => {
-      attributeFilters.push(`filters[attributes][name][$eq]=type&filters[attributes][value][$eq]=${encodeURIComponent(type)}`);
-      attributeFilters.push(`filters[attributes][name][$eq]=тип&filters[attributes][value][$eq]=${encodeURIComponent(type)}`);
-    });
-
-    // Note: Strapi doesn't support complex OR queries easily in URL params
-    // This is a simplified approach - in production you might need custom API endpoints
-    if (attributeFilters.length > 0) {
-      params.append("filters[$or]", attributeFilters.join('&'));
+    if (cat.startsWith("slug:")) {
+      const slug = cat.replace(/^slug:/, "").trim();
+      if (slug) categorySlugs.push(slug);
+    } else if (cat.startsWith("id:")) {
+      const id = cat.replace(/^id:/, "").trim();
+      if (id && !isNaN(Number(id))) categoryIds.push(id);
+    } else {
+      const slug = cat.trim();
+      if (slug) categorySlugs.push(slug);
     }
+  });
+
+  console.log("Category filters:", { categorySlugs, categoryIds });
+
+  if (categorySlugs.length > 0) {
+    // Use proper Strapi array syntax
+    params.append("filters[category][slug][$in]", categorySlugs.join(","));
+  }
+  if (categoryIds.length > 0) {
+    params.append("filters[category][id][$in]", categoryIds.join(","));
+  }
+
+  // Search filter - simplified
+  if (search) {
+    params.append("filters[$or][0][name][$containsi]", search);
+    params.append("filters[$or][1][description][$containsi]", search);
+    params.append("filters[$or][2][shortDescription][$containsi]", search);
+  }
+
+  // Attributes filter - single selection for sizes and types
+  if (sizes.length > 0) {
+    params.append("filters[attributes][name][$eq]", "size");
+    params.append("filters[attributes][value][$eq]", sizes[0]);
+  }
+  if (types.length > 0) {
+    params.append("filters[attributes][name][$eq]", "type");
+    params.append("filters[attributes][value][$eq]", types[0]);
   }
 
   if (sort === "price_asc") params.append("sort", "price:asc");
   if (sort === "price_desc") params.append("sort", "price:desc");
   if (sort === "newest") params.append("sort", "createdAt:desc");
+  if (sort === "name_asc") params.append("sort", "name:asc");
+  if (sort === "name_desc") params.append("sort", "name:desc");
 
+  params.append("pagination[page]", page);
+  params.append("pagination[pageSize]", pageSize);
   params.append("populate", "*");
 
-  return params.toString();
+  const queryString = params.toString();
+  console.log("Built query string:", queryString);
+
+  return queryString;
 }
 
 // Products
-export async function getProducts(searchParams?: Record<string, string | string[] | undefined>): Promise<Product[]> {
-  const queryString = searchParams ? buildStrapiQuery(searchParams) : "populate=*";
-  
+export async function getProducts(searchParams?: Record<string, string | string[] | undefined>): Promise<PaginatedProducts> {
+  let queryString: string;
+
+  if (searchParams && Object.keys(searchParams).length > 0) {
+    // If we have search params, use buildStrapiQuery (which already includes populate)
+    queryString = buildStrapiQuery(searchParams);
+  } else {
+    // If no search params, use default query
+    queryString = "populate=*&pagination[page]=1&pagination[pageSize]=12";
+  }
+
+  console.log("API Request URL:", `${SERVER_API_URL}/api/products?${queryString}`);
+
   const res = await fetch(
     `${SERVER_API_URL}/api/products?${queryString}`,
     {
@@ -173,12 +230,24 @@ export async function getProducts(searchParams?: Record<string, string | string[
   );
 
   if (!res.ok) {
-    throw new Error(`Failed to fetch products: ${res.status}`);
+    const errorText = await res.text().catch(() => 'Unknown error');
+    console.error(`API Error ${res.status}:`, errorText);
+    // Temporary fallback: return empty products instead of throwing
+    console.warn('Returning empty products due to API error');
+    return {
+      products: [],
+      pagination: {
+        page: 1,
+        pageSize: 12,
+        pageCount: 1,
+        total: 0,
+      },
+    };
   }
 
   const data = await res.json();
 
-  return (data?.data ?? []).map(
+  const products = (data?.data ?? []).map(
     (item: StrapiProduct): Product => ({
       id: item.id,
       documentId: item.documentId,
@@ -203,6 +272,18 @@ export async function getProducts(searchParams?: Record<string, string | string[
       reviews: mapReviews(item.reviews),
     })
   );
+
+  const pagination = data?.meta?.pagination ?? {
+    page: 1,
+    pageSize: 12,
+    pageCount: 1,
+    total: products.length,
+  };
+
+  return {
+    products,
+    pagination,
+  };
 }
 
 export async function getProduct(slug: string): Promise<Product | undefined> {
@@ -248,16 +329,25 @@ export async function getProduct(slug: string): Promise<Product | undefined> {
 }
 
 export async function getRelatedProducts(product: Product): Promise<Product[]> {
-  const products = await getProducts();
-  const related = products.filter((item) => item.id !== product.id);
-  const sameCategory = product.category
-    ? related.filter((item) => item.category?.id === product.category?.id)
-    : [];
+  try {
+    // Получаем больше продуктов для выбора похожих
+    const { products } = await getProducts({ "pagination[pageSize]": "20" });
+    const related = products.filter((item) => item.id !== product.id);
 
-  return [
-    ...sameCategory,
-    ...related.filter((item) => !sameCategory.includes(item)),
-  ].slice(0, 8);
+    // Сначала продукты из той же категории
+    const sameCategory = product.category
+      ? related.filter((item) => item.category?.id === product.category?.id)
+      : [];
+
+    // Затем остальные продукты
+    const otherProducts = related.filter((item) => !sameCategory.includes(item));
+
+    // Объединяем и ограничиваем до 8 продуктов
+    return [...sameCategory, ...otherProducts].slice(0, 8);
+  } catch (error) {
+    console.error("Error fetching related products:", error);
+    return [];
+  }
 }
 
 // Categories

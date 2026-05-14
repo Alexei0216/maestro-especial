@@ -50,6 +50,16 @@
   }[];
 };
 
+export type PaginatedProducts = {
+  products: Product[];
+  pagination: {
+    page: number;
+    pageSize: number;
+    pageCount: number;
+    total: number;
+  };
+};
+
 export type Category = {
   id: number;
   documentId: string;

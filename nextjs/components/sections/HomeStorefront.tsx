@@ -118,9 +118,8 @@ export default function HomeStorefront() {
 
           <div className="grid gap-4">
             {services.map((service) => (
-              <Link href={"/"}>
+              <Link key={service.title} href={"/"}>
                 <article
-                  key={service.title}
                   className="motion-soft rounded-lg border border-white/10 bg-white/10 p-5 hover:-translate-y-0.5 hover:bg-white/15 flex items-center justify-between"
                 >
                   <div className="">

@@ -5,6 +5,7 @@ import ProductMedia from "@/components/ui/ProductMedia";
 import ProductCard from "@/components/ui/ProductCard";
 import QuantityControl from "@/components/ui/QuantityControl";
 import { getProduct, getRelatedProducts } from "@/lib/api";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 
 type ProductPageProps = {
   params: Promise<{
@@ -111,7 +112,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
       />
 
-      <Container className="py-10 lg:py-14">
+      <Container>
+        <Breadcrumbs/>
         <section className="animate-fade-up relative grid gap-8 lg:grid-cols-[128px_minmax(420px,680px)_minmax(320px,1fr)] lg:items-start lg:gap-2">
           <div className="order-3 flex items-start lg:order-3 lg:self-stretch lg:pl-14 xl:pl-20">
             <aside className="w-full max-w-[380px] lg:sticky lg:top-8">
@@ -180,7 +182,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
       {relatedProducts.length > 0 && (
         <section
-          className="animate-fade-up mx-auto overflow-hidden bg-white py-12"
+          className="animate-fade-up mx-auto overflow-hidden py-12"
           aria-labelledby="related-products-title"
         >
           <Container>

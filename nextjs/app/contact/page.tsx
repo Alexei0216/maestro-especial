@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Container from "@/components/layouts/Container";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Contacto",
@@ -30,7 +31,8 @@ const contactCards = [
 export default function ContactPage() {
   return (
     <main className="bg-[#f8f6ef] text-neutral-950">
-      <Container className="py-10 lg:py-14">
+      <Container className="pb-10 lg:pb-14">
+        <Breadcrumbs />
         <section className="animate-fade-up grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
           <div className="lg:sticky lg:top-8">
             <p className="text-sm font-semibold uppercase tracking-[0.14em] text-yellow-700">
