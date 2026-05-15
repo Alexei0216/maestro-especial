@@ -21,10 +21,15 @@ export default function FilterPanel({
 }: FilterPanelProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const parsePositiveNumber = (value: string | null) => {
+    if (value === null || value.trim() === "") return null;
+    const parsed = Number(value);
+    return Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
+  };
 
   // Get current filter values from URL
-  const minPriceQuery = Number(searchParams.get("minPrice"));
-  const maxPriceQuery = Number(searchParams.get("maxPrice"));
+  const minPriceQuery = parsePositiveNumber(searchParams.get("minPrice"));
+  const maxPriceQuery = parsePositiveNumber(searchParams.get("maxPrice"));
   const currentCategories =
     searchParams.get("categories")?.split(",").filter(Boolean) || [];
   const currentSort = searchParams.get("sort") || "";
@@ -33,9 +38,9 @@ export default function FilterPanel({
   const currentSearch = searchParams.get("search") || "";
 
   const initialMinPrice =
-    Number.isFinite(minPriceQuery) && minPriceQuery >= 0 ? minPriceQuery : 0;
+    minPriceQuery !== null ? minPriceQuery : 0;
   const initialMaxPrice =
-    Number.isFinite(maxPriceQuery) && maxPriceQuery >= 0
+    maxPriceQuery !== null
       ? maxPriceQuery
       : maxPrice;
 
@@ -51,6 +56,7 @@ export default function FilterPanel({
   const [search, setSearch] = useState(currentSearch);
   const [activeHandle, setActiveHandle] = useState<"min" | "max" | null>(null);
   const trackRef = useRef<HTMLDivElement | null>(null);
+  const isFirstAutoApplyRender = useRef(true);
 
   const clamp = (value: number, min: number, max: number) =>
     Math.min(max, Math.max(min, value));
@@ -99,7 +105,7 @@ export default function FilterPanel({
   }, [activeHandle, maxPrice]);
 
   // Apply filters
-  const applyFilters = useCallback(() => {
+  const applyFilters = useCallback((searchValue = search) => {
     const params = new URLSearchParams();
 
     if (priceRange[0] > 0) params.append("minPrice", priceRange[0].toString());
@@ -110,11 +116,13 @@ export default function FilterPanel({
     if (sort) params.append("sort", sort);
     if (selectedSizes.length > 0) params.append("sizes", selectedSizes[0]);
     if (selectedTypes.length > 0) params.append("types", selectedTypes[0]);
-    if (search) params.append("search", search);
-
+    const normalizedSearch = searchValue.trim();
+    if (normalizedSearch) params.append("search", normalizedSearch);
     const queryString = params.toString();
-    router.push(`/catalog${queryString ? "?" + queryString : ""}`);
-  }, [priceRange, selectedCategories, sort, selectedSizes, selectedTypes, search, maxPrice, router]);
+    router.replace(`/catalog${queryString ? "?" + queryString : ""}`, {
+      scroll: false,
+    });
+  }, [priceRange, selectedCategories, sort, selectedSizes, selectedTypes, search, maxPrice, router, searchParams]);
 
   // Reset filters
   const resetFilters = useCallback(() => {
@@ -131,6 +139,19 @@ export default function FilterPanel({
   useEffect(() => {
     if (onSearchChange) onSearchChange(search);
   }, [search, onSearchChange]);
+
+  useEffect(() => {
+    if (isFirstAutoApplyRender.current) {
+      isFirstAutoApplyRender.current = false;
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      applyFilters(search);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [search, priceRange, selectedCategories, sort, selectedSizes, selectedTypes, applyFilters]);
 
   return (
     <div className="w-full md:w-72 pr-0 md:pr-6 mb-6 md:mb-0">
@@ -333,12 +354,6 @@ export default function FilterPanel({
 
         {/* Action Buttons */}
         <div className="space-y-2 pt-2">
-          <button
-            onClick={applyFilters}
-            className="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-2.5 px-4 rounded-md motion-soft transition-colors shadow-sm hover:shadow-md"
-          >
-            Aplicar
-          </button>
           <button
             onClick={resetFilters}
             className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-2.5 px-4 rounded-md motion-soft transition-colors"

@@ -180,6 +180,10 @@ export function buildStrapiQuery(searchParams: Record<string, string | string[] 
     params.append("filters[$or][0][name][$containsi]", search);
     params.append("filters[$or][1][description][$containsi]", search);
     params.append("filters[$or][2][shortDescription][$containsi]", search);
+    params.append("filters[$or][3][sku][$containsi]", search);
+    params.append("filters[$or][4][category][name][$containsi]", search);
+    params.append("filters[$or][5][attributes][name][$containsi]", search);
+    params.append("filters[$or][6][attributes][value][$containsi]", search);
   }
 
   // Attributes filter - single selection for sizes and types
