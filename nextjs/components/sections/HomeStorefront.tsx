@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Container from "../layouts/Container";
 import { ChevronRightIcon } from "../icons"
+import { services } from "@/lib/services";
 
 const categories = [
   {
@@ -14,24 +15,6 @@ const categories = [
   {
     title: "Locales comerciales",
     description: "Equipos robustos para tiendas, restaurantes y espacios de trabajo.",
-  },
-];
-
-const services = [
-  {
-    title: "Instalacion certificada",
-    description:
-      "Visita tecnica, calculo de potencia, montaje limpio y puesta en marcha.",
-  },
-  {
-    title: "Mantenimiento",
-    description:
-      "Limpieza, revision de gas, filtros y control de rendimiento estacional.",
-  },
-  {
-    title: "Reparacion y diagnostico",
-    description:
-      "Localizamos averias, fugas y problemas de rendimiento con criterio tecnico.",
   },
 ];
 
@@ -114,21 +97,24 @@ export default function HomeStorefront() {
               Un aire acondicionado mal dimensionado consume mas, enfria peor y
               dura menos. Por eso unimos producto, instalacion y mantenimiento.
             </p>
+            <Link href={"/services"} className="mt-auto cursor-pointer max-w-[150px] motion-soft rounded-lg bg-yellow-500 px-6 py-3 font-bold text-black hover:-translate-y-0.5 hover:bg-yellow-600 hover:shadow-lg">
+              Mostrar mas
+            </Link>
           </div>
 
           <div className="grid gap-4">
             {services.map((service) => (
-              <Link key={service.title} href={"/"}>
+              <Link key={service.title} href={`/services/${service.slug}`}>
                 <article
                   className="motion-soft rounded-lg border border-white/10 bg-white/10 p-5 hover:-translate-y-0.5 hover:bg-white/15 flex items-center justify-between"
                 >
-                  <div className="">
+                  <div className="flex flex-col">
                     <h3 className="text-xl font-bold">{service.title}</h3>
                     <p className="mt-2 text-sm leading-6 text-white/70">
                       {service.description}
                     </p>
                   </div>
-                  <div className="">
+                  <div>
                     <ChevronRightIcon />
                   </div>
                 </article>
