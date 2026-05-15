@@ -12,12 +12,12 @@ type ProductMediaProps = {
 };
 
 export default function ProductMedia({ images, name }: ProductMediaProps) {
-  const [activeImage, setActiveImage] = useState(images[0]);
+  const [activeIndex, setActiveIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const activeIndex = Math.max(
-    images.findIndex((image) => image === activeImage),
-    0,
-  );
+  const [isZoomed, setIsZoomed] = useState(false);
+  const [zoomOrigin, setZoomOrigin] = useState({ x: 50, y: 50 });
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const activeImage = images[activeIndex] ?? images[0];
 
   const showImage = useCallback((index: number) => {
     if (images.length === 0) {
@@ -25,8 +25,19 @@ export default function ProductMedia({ images, name }: ProductMediaProps) {
     }
 
     const nextIndex = (index + images.length) % images.length;
-    setActiveImage(images[nextIndex]);
+    setActiveIndex(nextIndex);
   }, [images]);
+
+  useEffect(() => {
+    if (images.length === 0) {
+      setActiveIndex(0);
+      return;
+    }
+
+    if (activeIndex >= images.length) {
+      setActiveIndex(0);
+    }
+  }, [activeIndex, images]);
 
   useEffect(() => {
     if (!isModalOpen) {
@@ -56,6 +67,11 @@ export default function ProductMedia({ images, name }: ProductMediaProps) {
     };
   }, [activeIndex, isModalOpen, showImage]);
 
+  useEffect(() => {
+    setIsZoomed(false);
+    setZoomOrigin({ x: 50, y: 50 });
+  }, [activeIndex]);
+
   return (
     <>
       <div className="order-2 lg:order-2">
@@ -84,7 +100,12 @@ export default function ProductMedia({ images, name }: ProductMediaProps) {
           images={images}
           name={name}
           activeImage={activeImage}
-          onSelect={setActiveImage}
+          onSelect={(image) => {
+            const index = images.findIndex((item) => item === image);
+            if (index >= 0) {
+              setActiveIndex(index);
+            }
+          }}
         />
       </div>
 
@@ -125,6 +146,25 @@ export default function ProductMedia({ images, name }: ProductMediaProps) {
           <div
             className="animate-modal-zoom relative h-full max-h-[90vh] w-full max-w-6xl"
             onClick={(event) => event.stopPropagation()}
+            onTouchStart={(event) => {
+              const x = event.touches[0]?.clientX;
+              if (x !== undefined) setTouchStartX(x);
+            }}
+            onTouchEnd={(event) => {
+              const startX = touchStartX;
+              const endX = event.changedTouches[0]?.clientX;
+
+              if (startX === null || endX === undefined) return;
+
+              const distance = endX - startX;
+              if (Math.abs(distance) < 40) return;
+
+              if (distance > 0) {
+                showImage(activeIndex - 1);
+              } else {
+                showImage(activeIndex + 1);
+              }
+            }}
           >
             <Image
               src={activeImage}
@@ -132,7 +172,33 @@ export default function ProductMedia({ images, name }: ProductMediaProps) {
               fill
               sizes="100vw"
               unoptimized
-              className="object-contain"
+              className={`object-contain motion-soft ${isZoomed ? "cursor-zoom-out" : "cursor-zoom-in"}`}
+              onClick={(event) => {
+                const rect = event.currentTarget.getBoundingClientRect();
+                const xPercent = ((event.clientX - rect.left) / rect.width) * 100;
+                const yPercent = ((event.clientY - rect.top) / rect.height) * 100;
+
+                setZoomOrigin({
+                  x: Math.min(100, Math.max(0, xPercent)),
+                  y: Math.min(100, Math.max(0, yPercent)),
+                });
+                setIsZoomed((prev) => !prev);
+              }}
+              onMouseMove={(event) => {
+                if (!isZoomed) return;
+
+                const rect = event.currentTarget.getBoundingClientRect();
+                const xPercent = ((event.clientX - rect.left) / rect.width) * 100;
+                const yPercent = ((event.clientY - rect.top) / rect.height) * 100;
+                setZoomOrigin({
+                  x: Math.min(100, Math.max(0, xPercent)),
+                  y: Math.min(100, Math.max(0, yPercent)),
+                });
+              }}
+              style={{
+                transform: isZoomed ? "scale(2)" : "scale(1)",
+                transformOrigin: `${zoomOrigin.x}% ${zoomOrigin.y}%`,
+              }}
             />
           </div>
 

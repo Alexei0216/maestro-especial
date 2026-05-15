@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import Container from "@/components/layouts/Container";
 import ProductMedia from "@/components/ui/ProductMedia";
 import ProductCard from "@/components/ui/ProductCard";
@@ -104,6 +105,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
             availability: "https://schema.org/InStock",
           },
   };
+  const categoryFilterHref = product.category
+    ? typeof product.category.slug === "string" &&
+      product.category.slug.trim() !== "" &&
+      product.category.slug !== "null" &&
+      product.category.slug !== "undefined"
+      ? `/catalog?categories=slug:${encodeURIComponent(product.category.slug)}`
+      : `/catalog?categories=id:${product.category.id}`
+    : undefined;
 
   return (
     <main className="bg-[#f8f6ef] text-neutral-950">
@@ -155,12 +164,23 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   <div>
                     <dt className="text-neutral-500">Categoria</dt>
                     <dd className="font-semibold">
-                      {product.category?.name ?? "Producto especial"}
+                      {product.category && categoryFilterHref ? (
+                        <Link
+                          href={categoryFilterHref}
+                          className="inline-flex rounded-sm text-yellow-700 underline-offset-2 hover:underline focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                        >
+                          {product.category.name}
+                        </Link>
+                      ) : (
+                        "Producto especial"
+                      )}
                     </dd>
                   </div>
                   <div>
                     <dt className="text-neutral-500">Referencia</dt>
-                    <dd className="font-semibold">ME-{product.id}</dd>
+                    <dd className="font-semibold">
+                      {product.sku?.trim() || `ME-${product.id}`}
+                    </dd>
                   </div>
                 </dl>
               </div>

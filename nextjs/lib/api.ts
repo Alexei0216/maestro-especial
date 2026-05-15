@@ -155,24 +155,44 @@ export function buildStrapiQuery(searchParams: Record<string, string | string[] 
 
     if (cat.startsWith("slug:")) {
       const slug = cat.replace(/^slug:/, "").trim();
-      if (slug) categorySlugs.push(slug);
+      if (
+        slug &&
+        slug !== "null" &&
+        slug !== "undefined"
+      ) {
+        categorySlugs.push(slug);
+      }
     } else if (cat.startsWith("id:")) {
       const id = cat.replace(/^id:/, "").trim();
       if (id && !isNaN(Number(id))) categoryIds.push(id);
     } else {
       const slug = cat.trim();
-      if (slug) categorySlugs.push(slug);
+      if (
+        slug &&
+        slug !== "null" &&
+        slug !== "undefined"
+      ) {
+        categorySlugs.push(slug);
+      }
     }
   });
 
   console.log("Category filters:", { categorySlugs, categoryIds });
 
-  if (categorySlugs.length > 0) {
-    // Use proper Strapi array syntax
-    params.append("filters[category][slug][$in]", categorySlugs.join(","));
+  if (categorySlugs.length === 1) {
+    params.append("filters[category][slug][$eq]", categorySlugs[0]);
+  } else if (categorySlugs.length > 1) {
+    categorySlugs.forEach((slug, index) => {
+      params.append(`filters[category][slug][$in][${index}]`, slug);
+    });
   }
-  if (categoryIds.length > 0) {
-    params.append("filters[category][id][$in]", categoryIds.join(","));
+
+  if (categoryIds.length === 1) {
+    params.append("filters[category][id][$eq]", categoryIds[0]);
+  } else if (categoryIds.length > 1) {
+    categoryIds.forEach((id, index) => {
+      params.append(`filters[category][id][$in][${index}]`, id);
+    });
   }
 
   // Search filter - simplified
