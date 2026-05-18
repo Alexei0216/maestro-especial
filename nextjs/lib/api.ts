@@ -292,6 +292,19 @@ export async function getProducts(searchParams?: Record<string, string | string[
         name: item.category.name,
         slug: item.category.slug,
       } : undefined,
+      brand: item.brand
+        ? {
+            id: item.brand.id,
+            title: item.brand.title,
+            slug: item.brand.slug,
+          }
+        : undefined,
+      inverter: item.inverter,
+      wifi: item.wifi,
+      btu: item.btu,
+      roomArea: item.roomArea,
+      energyClass: item.energyClass,
+      installationType: item.installationType,
       variants: mapVariants(item.product_variants),
       reviews: mapReviews(item.reviews),
     })
@@ -347,6 +360,19 @@ export async function getProduct(slug: string): Promise<Product | undefined> {
       name: item.category.name,
       slug: item.category.slug,
     } : undefined,
+    brand: item.brand
+      ? {
+          id: item.brand.id,
+          title: item.brand.title,
+          slug: item.brand.slug,
+        }
+      : undefined,
+    inverter: item.inverter,
+    wifi: item.wifi,
+    btu: item.btu,
+    roomArea: item.roomArea,
+    energyClass: item.energyClass,
+    installationType: item.installationType,
     variants: mapVariants(item.product_variants),
     reviews: mapReviews(item.reviews),
   };

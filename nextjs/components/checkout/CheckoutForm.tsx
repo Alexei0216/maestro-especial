@@ -66,7 +66,7 @@ export default function CheckoutForm() {
           Anade productos al carrito antes de finalizar tu pedido.
         </p>
         <Link
-          href="/"
+          href="/catalog"
           className="motion-soft mt-8 inline-flex rounded-lg bg-yellow-500 px-6 py-3 font-bold text-black hover:-translate-y-0.5 hover:bg-yellow-600 hover:shadow-lg"
         >
           Ver productos

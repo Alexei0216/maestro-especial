@@ -27,6 +27,17 @@
     name: string;
     slug: string;
   };
+  brand?: {
+    id: number;
+    title: string;
+    slug: string;
+  };
+  inverter?: boolean;
+  wifi?: boolean;
+  btu?: number;
+  roomArea?: number;
+  energyClass?: string;
+  installationType?: string;
   variants?: {
     id: number;
     sku?: string;

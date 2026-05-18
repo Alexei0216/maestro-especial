@@ -60,6 +60,9 @@
       "required": true,
       "unique": true
     },
+    "description": {
+      "type": "blocks"
+    },
     "shortDescription": {
       "type": "string"
     },
@@ -94,8 +97,48 @@
       "target": "api::review.review",
       "mappedBy": "product"
     },
-    "description": {
-      "type": "blocks"
+    "brand": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::brand.brand",
+      "inversedBy": "products"
+    },
+    "inverter": {
+      "type": "boolean",
+      "required": true
+    },
+    "btu": {
+      "type": "integer",
+      "required": true
+    },
+    "roomArea": {
+      "type": "integer",
+      "required": true
+    },
+    "noiseLevel": {
+      "type": "integer",
+      "required": true
+    },
+    "wifi": {
+      "type": "boolean"
+    },
+    "energyClass": {
+      "type": "enumeration",
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ]
+    },
+    "installationType": {
+      "type": "enumeration",
+      "enum": [
+        "wall",
+        "cassette",
+        "duct",
+        "floor"
+      ]
     }
   }
 }

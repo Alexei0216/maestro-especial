@@ -87,6 +87,29 @@ export default async function ProductPage({ params }: ProductPageProps) {
         }).format(product.price);
 
   const productDescription = getPlainText(product.description);
+  const technicalSpecs: Array<{ label: string; value: string }> = [
+    product.brand?.title
+      ? { label: "Marca", value: product.brand.title }
+      : null,
+    typeof product.btu === "number"
+      ? { label: "BTU", value: String(product.btu) }
+      : null,
+    typeof product.roomArea === "number"
+      ? { label: "Superficie recomendada", value: `${product.roomArea} m²` }
+      : null,
+    product.energyClass
+      ? { label: "Clase energética", value: product.energyClass }
+      : null,
+    product.installationType
+      ? { label: "Tipo de instalación", value: product.installationType }
+      : null,
+    typeof product.inverter === "boolean"
+      ? { label: "Tecnología inverter", value: product.inverter ? "Sí" : "No" }
+      : null,
+    typeof product.wifi === "boolean"
+      ? { label: "Wi-Fi", value: product.wifi ? "Sí" : "No" }
+      : null,
+  ].filter((item): item is { label: string; value: string } => Boolean(item));
 
   const productSchema = {
     "@context": "https://schema.org",
@@ -198,6 +221,29 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </p>
           </div>
         </section>
+
+        {technicalSpecs.length > 0 && (
+          <section className="animate-fade-up mt-10 border-t border-neutral-300 pt-10">
+            <div className="max-w-4xl">
+              <h2 className="text-3xl font-bold">Especificaciones técnicas</h2>
+              <dl className="mt-6 divide-y divide-neutral-200 rounded-lg border border-neutral-200 bg-white">
+                {technicalSpecs.map((spec) => (
+                  <div
+                    key={spec.label}
+                    className="grid grid-cols-1 gap-2 px-4 py-3 sm:grid-cols-[220px_minmax(0,1fr)] sm:gap-4"
+                  >
+                    <dt className="text-sm font-medium text-neutral-500">
+                      {spec.label}
+                    </dt>
+                    <dd className="text-sm font-semibold text-neutral-900">
+                      {spec.value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </section>
+        )}
       </Container>
 
       {relatedProducts.length > 0 && (

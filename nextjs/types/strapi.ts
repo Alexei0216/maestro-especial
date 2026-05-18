@@ -43,6 +43,14 @@ export type StrapiCategory = {
   products?: StrapiProduct[];
 };
 
+export type StrapiBrand = {
+  id: number;
+  documentId: string;
+  title: string;
+  slug: string;
+  logo?: StrapiMedia;
+};
+
 export type StrapiProductVariant = {
   id: number;
   documentId: string;
@@ -130,4 +138,11 @@ export type StrapiProduct = {
   product_variants?: StrapiProductVariant[];
   reviews?: StrapiReview[];
   order_item?: StrapiOrderItem;
+  brand?: StrapiBrand;
+  inverter?: boolean;
+  wifi?: boolean;
+  btu?: number;
+  roomArea?: number;
+  energyClass?: string;
+  installationType?: string;
 };

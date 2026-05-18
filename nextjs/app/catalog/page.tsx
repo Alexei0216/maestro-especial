@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { getCategories } from "../../lib/api";
 import {
+  getBrands,
+  getProductFilterOptions,
   getProducts,
-  getCategories,
-  getProductAttributes,
-} from "../../lib/api";
+} from "../../lib/products";
 import ProductCard from "../../components/ui/ProductCard";
 import Container from "../../components/layouts/Container";
 import Section from "../../components/layouts/Section";
@@ -24,10 +25,11 @@ interface CatalogPageProps {
 export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   const params = await searchParams;
 
-  const [result, categories, attributes] = await Promise.all([
+  const [result, categories, brands, filterOptions] = await Promise.all([
     getProducts(params),
     getCategories(),
-    getProductAttributes(),
+    getBrands(),
+    getProductFilterOptions(),
   ]);
 
   const { products, pagination } = result;
@@ -38,7 +40,14 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
         <Breadcrumbs />
         <div className="flex flex-col md:flex-row gap-6">
           {/* Filters Panel */}
-          <FilterPanel categories={categories} attributes={attributes} />
+          <FilterPanel
+            categories={categories}
+            brands={brands}
+            btuOptions={filterOptions.btuOptions}
+            roomAreaOptions={filterOptions.roomAreaOptions}
+            energyClassOptions={filterOptions.energyClassOptions}
+            installationTypeOptions={filterOptions.installationTypeOptions}
+          />
 
           {/* Products Section */}
           <div className="flex-1">
