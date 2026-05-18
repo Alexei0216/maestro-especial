@@ -1,7 +1,8 @@
 import Link from "next/link";
 import Container from "@/components/layouts/Container";
-import { services } from "@/lib/services";
+import { services, Service } from "@/lib/services";
 import { ChevronRightIcon } from "@/components/icons";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import { notFound } from "next/navigation";
 
 type Props = {
@@ -26,13 +27,12 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function ServicePage({ params }: Props) {
   const { slug } = await params;
-  const service = services.find((s) => s.slug === slug);
+  const service = services.find((s) => s.slug === slug) as Service | undefined;
 
   if (!service) {
     notFound();
   }
 
-  // Otros servicios para mostrar
   const otherServices = services.filter((s) => s.slug !== slug);
 
   return (
@@ -75,33 +75,12 @@ export default async function ServicePage({ params }: Props) {
               </p>
 
               <div className="mt-8 space-y-4">
-                <div className="flex gap-4">
-                  <div className="mt-1 h-6 w-6 flex-shrink-0 rounded-full bg-yellow-500/20" />
-                  <div>
-                    <h3 className="font-semibold">Profesionalismo</h3>
-                    <p className="mt-1 text-sm text-neutral-600">
-                      Equipo certificado y con experiencia en el sector.
-                    </p>
+                {service.highlights.map((highlight) => (
+                  <div key={highlight} className="flex gap-4">
+                    <div className="mt-1 h-6 w-6 flex-shrink-0 rounded-full bg-yellow-500/20" />
+                    <p className="text-sm leading-7 text-neutral-600">{highlight}</p>
                   </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="mt-1 h-6 w-6 flex-shrink-0 rounded-full bg-yellow-500/20" />
-                  <div>
-                    <h3 className="font-semibold">Garantía de calidad</h3>
-                    <p className="mt-1 text-sm text-neutral-600">
-                      Todos nuestros servicios cuentan con garantía y seguimiento.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="mt-1 h-6 w-6 flex-shrink-0 rounded-full bg-yellow-500/20" />
-                  <div>
-                    <h3 className="font-semibold">Atención al cliente</h3>
-                    <p className="mt-1 text-sm text-neutral-600">
-                      Respuesta rápida y soluciones personalizadas para tus necesidades.
-                    </p>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>

@@ -1,28 +1,8 @@
 import Link from "next/link";
 import Container from "../layouts/Container";
-import { ChevronRightIcon } from "../icons"
-import { services } from "@/lib/services";
-
-const categories = [
-  {
-    title: "Split mural",
-    description: "Soluciones silenciosas para dormitorios, salones y oficinas.",
-  },
-  {
-    title: "Conductos",
-    description: "Climatizacion integrada para viviendas completas y reformas.",
-  },
-  {
-    title: "Locales comerciales",
-    description: "Equipos robustos para tiendas, restaurantes y espacios de trabajo.",
-  },
-];
-
-const steps = [
-  "Cuentanos el espacio",
-  "Elegimos el equipo adecuado",
-  "Instalamos y verificamos",
-];
+import { ChevronRightIcon } from "../icons";
+import { services, categories, steps } from "@/lib/services";
+import ServiceCard from "@/components/ui/ServiceCard";
 
 export default function HomeStorefront() {
   return (
@@ -84,8 +64,8 @@ export default function HomeStorefront() {
         </div>
       </section>
 
-      <section className="animate-fade-up py-10">
-        <div className="grid gap-8 rounded-lg bg-[#302400] p-6 text-white lg:grid-cols-[0.9fr_1.1fr] lg:p-8">
+      <section className="animate-fade-up py-8">
+        <div className="grid gap-8 rounded-lg bg-[#302400] p-5 text-white lg:grid-cols-[0.9fr_1.1fr] lg:p-6">
           <div className="flex flex-col gap-4">
             <p className="text-sm font-semibold uppercase tracking-[0.14em] text-yellow-400">
               Servicios
@@ -93,7 +73,7 @@ export default function HomeStorefront() {
             <h2 className="mt-2 text-3xl font-bold">
               No solo vendemos equipos, resolvemos climatizacion
             </h2>
-            <p className="mt-4 leading-7 text-white/70">
+            <p className="mt-4 leading-7 text-white/85">
               Un aire acondicionado mal dimensionado consume mas, enfria peor y
               dura menos. Por eso unimos producto, instalacion y mantenimiento.
             </p>
@@ -104,21 +84,13 @@ export default function HomeStorefront() {
 
           <div className="grid gap-4">
             {services.map((service) => (
-              <Link key={service.title} href={`/services/${service.slug}`}>
-                <article
-                  className="motion-soft rounded-lg border border-white/10 bg-white/10 p-5 hover:-translate-y-0.5 hover:bg-white/15 flex items-center justify-between"
-                >
-                  <div className="flex flex-col">
-                    <h3 className="text-xl font-bold">{service.title}</h3>
-                    <p className="mt-2 text-sm leading-6 text-white/70">
-                      {service.description}
-                    </p>
-                  </div>
-                  <div>
-                    <ChevronRightIcon />
-                  </div>
-                </article>
-              </Link>
+              <ServiceCard
+                key={service.slug}
+                title={service.title}
+                description={service.description}
+                href={`/services/${service.slug}`}
+                inverted
+              />
             ))}
           </div>
         </div>
