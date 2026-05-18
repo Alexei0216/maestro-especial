@@ -117,7 +117,9 @@ export default function FilterPanel({
       });
     };
     document.addEventListener("mousemove", handleMove);
-    document.addEventListener("touchmove", handleMove, { passive: false } as EventListenerOptions);
+    document.addEventListener("touchmove", handleMove, {
+      passive: false,
+    } as EventListenerOptions);
     document.addEventListener("mouseup", stop);
     document.addEventListener("touchend", stop);
 
@@ -146,8 +148,14 @@ export default function FilterPanel({
     return () => clearTimeout(timer);
   }, [searchInput]);
 
-  const selectedBrandSet = useMemo(() => new Set(selectedBrands), [selectedBrands]);
-  const selectedEnergySet = useMemo(() => new Set(selectedEnergyClass), [selectedEnergyClass]);
+  const selectedBrandSet = useMemo(
+    () => new Set(selectedBrands),
+    [selectedBrands],
+  );
+  const selectedEnergySet = useMemo(
+    () => new Set(selectedEnergyClass),
+    [selectedEnergyClass],
+  );
 
   return (
     <div className="w-full md:w-72 pr-0 md:pr-6 mb-6 md:mb-0">
@@ -166,7 +174,9 @@ export default function FilterPanel({
         <h2 className="text-lg font-semibold mb-6 text-gray-900">Filtros</h2>
 
         <div className="mb-6 pb-6 border-b border-gray-200">
-          <h3 className="font-medium text-gray-800 mb-3 text-sm uppercase tracking-wide">Precio</h3>
+          <h3 className="font-medium text-gray-800 mb-3 text-sm uppercase tracking-wide">
+            Precio
+          </h3>
           <div className="px-1 space-y-4">
             <div className="relative h-12" ref={trackRef}>
               <div className="absolute inset-x-0 top-1/2 h-2 -translate-y-1/2 rounded-full bg-gray-200" />
@@ -208,13 +218,19 @@ export default function FilterPanel({
         </div>
 
         <div className="mb-6 pb-6 border-b border-gray-200">
-          <h3 className="font-medium text-gray-800 mb-3 text-sm uppercase tracking-wide">Categoría</h3>
+          <h3 className="font-medium text-gray-800 mb-3 text-sm uppercase tracking-wide">
+            Categoría
+          </h3>
           <div className="space-y-2">
             {categories.map((category) => {
               const value = getCategoryValue(category);
               return (
-                <label key={category.id} className="flex items-center gap-2 text-sm text-gray-700">
+                <label
+                  key={category.id}
+                  className="flex items-center gap-2 text-sm text-gray-700"
+                >
                   <input
+                    className="accent-yellow-500"
                     type="checkbox"
                     checked={selectedCategories.includes(value)}
                     onChange={(event) => {
@@ -235,11 +251,17 @@ export default function FilterPanel({
         </div>
 
         <div className="mb-6 pb-6 border-b border-gray-200">
-          <h3 className="font-medium text-gray-800 mb-3 text-sm uppercase tracking-wide">Marca</h3>
+          <h3 className="font-medium text-gray-800 mb-3 text-sm uppercase tracking-wide">
+            Marca
+          </h3>
           <div className="space-y-2">
             {brands.map((brand) => (
-              <label key={brand.id} className="flex items-center gap-2 text-sm text-gray-700">
+              <label
+                key={brand.id}
+                className="flex items-center gap-2 text-sm text-gray-700"
+              >
                 <input
+                  className="accent-yellow-500"
                   type="checkbox"
                   checked={selectedBrandSet.has(brand.slug)}
                   onChange={(event) => {
@@ -260,7 +282,9 @@ export default function FilterPanel({
         </div>
 
         <div className="mb-6 pb-6 border-b border-gray-200">
-          <h3 className="font-medium text-gray-800 mb-3 text-sm uppercase tracking-wide">BTU</h3>
+          <h3 className="font-medium text-gray-800 mb-3 text-sm uppercase tracking-wide">
+            BTU
+          </h3>
           <select
             value={selectedBTU}
             onChange={(event) => {
@@ -280,7 +304,9 @@ export default function FilterPanel({
         </div>
 
         <div className="mb-6 pb-6 border-b border-gray-200">
-          <h3 className="font-medium text-gray-800 mb-3 text-sm uppercase tracking-wide">Área recomendada</h3>
+          <h3 className="font-medium text-gray-800 mb-3 text-sm uppercase tracking-wide">
+            Área recomendada
+          </h3>
           <select
             value={selectedRoomArea}
             onChange={(event) => {
@@ -300,11 +326,17 @@ export default function FilterPanel({
         </div>
 
         <div className="mb-6 pb-6 border-b border-gray-200">
-          <h3 className="font-medium text-gray-800 mb-3 text-sm uppercase tracking-wide">Clase energética</h3>
+          <h3 className="font-medium text-gray-800 mb-3 text-sm uppercase tracking-wide">
+            Clase energética
+          </h3>
           <div className="space-y-2">
             {energyClassOptions.map((energy) => (
-              <label key={energy} className="flex items-center gap-2 text-sm text-gray-700">
+              <label
+                key={energy}
+                className="flex items-center gap-2 text-sm text-gray-700"
+              >
                 <input
+                  className="accent-yellow-500"
                   type="checkbox"
                   checked={selectedEnergySet.has(energy)}
                   onChange={(event) => {
@@ -325,7 +357,9 @@ export default function FilterPanel({
         </div>
 
         <div className="mb-6 pb-6 border-b border-gray-200">
-          <h3 className="font-medium text-gray-800 mb-3 text-sm uppercase tracking-wide">Instalación</h3>
+          <h3 className="font-medium text-gray-800 mb-3 text-sm uppercase tracking-wide">
+            Instalación
+          </h3>
           <select
             value={selectedInstallationType}
             onChange={(event) => {
@@ -339,16 +373,23 @@ export default function FilterPanel({
           >
             <option value="">Cualquiera</option>
             {installationTypeOptions.map((type) => (
-              <option key={type} value={type}>{type}</option>
+              <option key={type} value={type}>
+                {type}
+              </option>
             ))}
           </select>
         </div>
 
         <div className="mb-6 pb-6 border-b border-gray-200 space-y-2">
-          <h3 className="font-medium text-gray-800 mb-3 text-sm uppercase tracking-wide">Tecnología</h3>
-          <p className="text-xs text-gray-500 mb-2">Funciones clave del equipo</p>
+          <h3 className="font-medium text-gray-800 mb-3 text-sm uppercase tracking-wide">
+            Tecnología
+          </h3>
+          <p className="text-xs text-gray-500 mb-2">
+            Funciones clave del equipo
+          </p>
           <label className="flex items-center gap-2 text-sm text-gray-700">
             <input
+              className="accent-yellow-500"
               type="checkbox"
               checked={inverterOnly}
               onChange={(event) => {
@@ -362,6 +403,7 @@ export default function FilterPanel({
           </label>
           <label className="flex items-center gap-2 text-sm text-gray-700">
             <input
+              className="accent-yellow-500"
               type="checkbox"
               checked={wifiOnly}
               onChange={(event) => {
@@ -376,7 +418,9 @@ export default function FilterPanel({
         </div>
 
         <div className="mb-6">
-          <h3 className="font-medium text-gray-800 mb-3 text-sm uppercase tracking-wide">Ordenar</h3>
+          <h3 className="font-medium text-gray-800 mb-3 text-sm uppercase tracking-wide">
+            Ordenar
+          </h3>
           <select
             value={sort}
             onChange={(event) => {
