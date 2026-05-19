@@ -109,6 +109,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
       },
       clearCart() {
         setItems([]);
+        if (typeof window !== "undefined") {
+          window.localStorage.removeItem(STORAGE_KEY);
+        }
       },
       openCart() {
         setIsOpen(true);

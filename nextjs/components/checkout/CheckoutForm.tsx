@@ -235,6 +235,7 @@ export default function CheckoutForm() {
         >
           {loading ? "Procesando..." : "Confirmar pedido"}
         </button>
+        {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
       </aside>
     </form>
   );
