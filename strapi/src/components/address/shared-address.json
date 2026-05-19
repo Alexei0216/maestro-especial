@@ -11,6 +11,9 @@
     "city": {
       "type": "string"
     },
+    "province": {
+      "type": "string"
+    },
     "zipCode": {
       "type": "string"
     },

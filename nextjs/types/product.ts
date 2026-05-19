@@ -97,12 +97,14 @@ export type Order = {
   id: number;
   documentId: string;
   orderNumber: string;
-  orderStatus: "pending" | "paid" | "shipped" | "completed" | "cancelled";
-  paymentStatus: "pending" | "paid" | "failed" | "refunded";
+  orderStatus: "pending" | "processing" | "shipped" | "completed" | "cancelled";
+  paymentStatus: "pending" | "paid" | "failed" | "refunded" | "cancelled";
   totalPrice: number;
   shippingPrice?: number;
   paymentMethod?: string;
   shippingMethod?: string;
+  customerNotes?: string;
+  preferredDeliveryTime?: string;
   customerName: string;
   customerEmail: string;
   customerPhone?: string;
@@ -122,6 +124,7 @@ export type Order = {
   shippingAddress?: {
     country: string;
     city: string;
+    province?: string;
     zipCode: string;
     street: string;
     apartment?: string;

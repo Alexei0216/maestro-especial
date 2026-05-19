@@ -34,9 +34,13 @@ export default function CheckoutForm() {
           email: formData.get("email"),
           phone: formData.get("phone"),
           address: formData.get("address"),
+          apartment: formData.get("apartment"),
           city: formData.get("city"),
+          province: formData.get("province"),
           postalCode: formData.get("postalCode"),
           notes: formData.get("notes"),
+          shippingMethod: formData.get("shippingMethod"),
+          preferredDeliveryTime: formData.get("preferredDeliveryTime"),
         },
         items,
         subtotal,
@@ -159,6 +163,17 @@ export default function CheckoutForm() {
             />
           </label>
 
+          <label className="space-y-2 text-sm font-semibold text-neutral-700 sm:col-span-2">
+            Piso, puerta, escalera
+            <input
+              name="apartment"
+              className="motion-soft h-12 w-full rounded-lg border border-neutral-300 px-4 font-normal outline-none focus:border-yellow-600 focus:shadow-[0_0_0_3px_rgba(234,179,8,0.18)]"
+              autoComplete="address-line2"
+              maxLength={500}
+              placeholder="Opcional"
+            />
+          </label>
+
           <label className="space-y-2 text-sm font-semibold text-neutral-700">
             Ciudad
             <input
@@ -166,6 +181,16 @@ export default function CheckoutForm() {
               name="city"
               className="motion-soft h-12 w-full rounded-lg border border-neutral-300 px-4 font-normal outline-none focus:border-yellow-600 focus:shadow-[0_0_0_3px_rgba(234,179,8,0.18)]"
               autoComplete="address-level2"
+            />
+          </label>
+
+          <label className="space-y-2 text-sm font-semibold text-neutral-700">
+            Provincia
+            <input
+              required
+              name="province"
+              className="motion-soft h-12 w-full rounded-lg border border-neutral-300 px-4 font-normal outline-none focus:border-yellow-600 focus:shadow-[0_0_0_3px_rgba(234,179,8,0.18)]"
+              autoComplete="address-level1"
             />
           </label>
 
@@ -179,11 +204,36 @@ export default function CheckoutForm() {
             />
           </label>
 
+          <label className="space-y-2 text-sm font-semibold text-neutral-700">
+            Metodo de entrega
+            <select
+              required
+              name="shippingMethod"
+              defaultValue="standard"
+              className="motion-soft h-12 w-full rounded-lg border border-neutral-300 bg-white px-4 font-normal outline-none focus:border-yellow-600 focus:shadow-[0_0_0_3px_rgba(234,179,8,0.18)]"
+            >
+              <option value="standard">Entrega estandar</option>
+              <option value="installation">Entrega con instalacion</option>
+              <option value="pickup">Recogida en tienda</option>
+            </select>
+          </label>
+
+          <label className="space-y-2 text-sm font-semibold text-neutral-700 sm:col-span-2">
+            Horario preferido
+            <input
+              name="preferredDeliveryTime"
+              className="motion-soft h-12 w-full rounded-lg border border-neutral-300 px-4 font-normal outline-none focus:border-yellow-600 focus:shadow-[0_0_0_3px_rgba(234,179,8,0.18)]"
+              maxLength={500}
+              placeholder="Manana, tarde, o una franja concreta"
+            />
+          </label>
+
           <label className="space-y-2 text-sm font-semibold text-neutral-700 sm:col-span-2">
             Comentario
             <textarea
               name="notes"
               className="motion-soft min-h-32 w-full rounded-lg border border-neutral-300 px-4 py-3 font-normal outline-none focus:border-yellow-600 focus:shadow-[0_0_0_3px_rgba(234,179,8,0.18)]"
+              maxLength={500}
               placeholder="Horario preferido, detalles de entrega..."
             />
           </label>

@@ -9,6 +9,7 @@ export interface AddressSharedAddress extends Struct.ComponentSchema {
     apartment: Schema.Attribute.String;
     city: Schema.Attribute.String;
     country: Schema.Attribute.String;
+    province: Schema.Attribute.String;
     street: Schema.Attribute.String;
     zipCode: Schema.Attribute.String;
   };

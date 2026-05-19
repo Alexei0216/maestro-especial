@@ -61,6 +61,12 @@
     "customerName": {
       "type": "string"
     },
+    "customerNotes": {
+      "type": "text"
+    },
+    "preferredDeliveryTime": {
+      "type": "string"
+    },
     "order_items": {
       "type": "relation",
       "relation": "oneToMany",

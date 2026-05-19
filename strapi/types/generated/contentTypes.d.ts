@@ -556,6 +556,7 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
     currency: Schema.Attribute.String & Schema.Attribute.DefaultTo<'EUR'>;
     customerEmail: Schema.Attribute.Email;
     customerName: Schema.Attribute.String;
+    customerNotes: Schema.Attribute.Text;
     customerPhone: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::order.order'> &
@@ -573,6 +574,7 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
     paymentStatus: Schema.Attribute.Enumeration<
       ['pending', 'paid', 'failed', 'refunded', 'cancelled']
     >;
+    preferredDeliveryTime: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     shippingAddress: Schema.Attribute.Component<
       'address.shared-address',

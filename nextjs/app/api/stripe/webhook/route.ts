@@ -11,11 +11,32 @@ type CustomerMeta = {
   lastName: string;
   phone: string;
   address: string;
+  apartment: string;
   city: string;
+  province: string;
   postalCode: string;
+  notes: string;
+  shippingMethod: string;
+  preferredDeliveryTime: string;
 };
 
 function parseCustomerMetadata(metadata?: Record<string, string | undefined>): CustomerMeta | null {
+  if (metadata && !metadata.customer) {
+    return {
+      firstName: String(metadata.firstName ?? ""),
+      lastName: String(metadata.lastName ?? ""),
+      phone: String(metadata.phone ?? ""),
+      address: String(metadata.address ?? ""),
+      apartment: String(metadata.apartment ?? ""),
+      city: String(metadata.city ?? ""),
+      province: String(metadata.province ?? ""),
+      postalCode: String(metadata.postalCode ?? ""),
+      notes: String(metadata.notes ?? ""),
+      shippingMethod: String(metadata.shippingMethod ?? ""),
+      preferredDeliveryTime: String(metadata.preferredDeliveryTime ?? ""),
+    };
+  }
+
   try {
     const customer = JSON.parse(metadata?.customer ?? "{}");
 
@@ -28,8 +49,13 @@ function parseCustomerMetadata(metadata?: Record<string, string | undefined>): C
       lastName: String(customer.lastName ?? ""),
       phone: String(customer.phone ?? ""),
       address: String(customer.address ?? ""),
+      apartment: String(customer.apartment ?? ""),
       city: String(customer.city ?? ""),
+      province: String(customer.province ?? ""),
       postalCode: String(customer.postalCode ?? ""),
+      notes: String(customer.notes ?? ""),
+      shippingMethod: String(customer.shippingMethod ?? ""),
+      preferredDeliveryTime: String(customer.preferredDeliveryTime ?? ""),
     };
   } catch {
     return null;
@@ -128,6 +154,9 @@ export async function POST(req: Request) {
           orderStatus: "processing",
           paymentStatus: "paid",
           paymentMethod: "stripe",
+          shippingMethod: customerMeta?.shippingMethod ?? "",
+          customerNotes: customerMeta?.notes ?? "",
+          preferredDeliveryTime: customerMeta?.preferredDeliveryTime ?? "",
           totalPrice,
           customerName,
           customerEmail: session.customer_details?.email ?? "",
@@ -135,9 +164,10 @@ export async function POST(req: Request) {
           shippingAddress: {
             country: "ES",
             city: customerMeta?.city ?? "",
+            province: customerMeta?.province ?? "",
             zipCode: customerMeta?.postalCode ?? "",
             street: customerMeta?.address ?? "",
-            apartment: "",
+            apartment: customerMeta?.apartment ?? "",
           },
         },
       }),

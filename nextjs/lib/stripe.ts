@@ -7,5 +7,5 @@ if (!key) {
 }
 
 export const stripe = new Stripe(key, {
-  apiVersion: "2025-04-30.basil",
+  apiVersion: "2026-04-22.dahlia",
 });

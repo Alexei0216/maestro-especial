@@ -18,6 +18,24 @@ async function strapiRequest(path: string, init?: RequestInit) {
 }
 
 function parseCustomerMetadata(metadata?: Record<string, string | undefined>) {
+  const source = metadata?.customer ? undefined : metadata;
+
+  if (source) {
+    return {
+      firstName: String(source.firstName ?? ""),
+      lastName: String(source.lastName ?? ""),
+      phone: String(source.phone ?? ""),
+      address: String(source.address ?? ""),
+      apartment: String(source.apartment ?? ""),
+      city: String(source.city ?? ""),
+      province: String(source.province ?? ""),
+      postalCode: String(source.postalCode ?? ""),
+      notes: String(source.notes ?? ""),
+      shippingMethod: String(source.shippingMethod ?? ""),
+      preferredDeliveryTime: String(source.preferredDeliveryTime ?? ""),
+    };
+  }
+
   try {
     const customer = JSON.parse(metadata?.customer ?? "{}");
     return {
@@ -25,8 +43,13 @@ function parseCustomerMetadata(metadata?: Record<string, string | undefined>) {
       lastName: String(customer.lastName ?? ""),
       phone: String(customer.phone ?? ""),
       address: String(customer.address ?? ""),
+      apartment: String(customer.apartment ?? ""),
       city: String(customer.city ?? ""),
+      province: String(customer.province ?? ""),
       postalCode: String(customer.postalCode ?? ""),
+      notes: String(customer.notes ?? ""),
+      shippingMethod: String(customer.shippingMethod ?? ""),
+      preferredDeliveryTime: String(customer.preferredDeliveryTime ?? ""),
     };
   } catch {
     return {
@@ -34,8 +57,13 @@ function parseCustomerMetadata(metadata?: Record<string, string | undefined>) {
       lastName: "",
       phone: "",
       address: "",
+      apartment: "",
       city: "",
+      province: "",
       postalCode: "",
+      notes: "",
+      shippingMethod: "",
+      preferredDeliveryTime: "",
     };
   }
 }
@@ -92,7 +120,7 @@ export async function POST(req: Request) {
       return Response.json({ error: "No valid items in session" }, { status: 400 });
     }
 
-    const customerMeta = parseCustomerMetadata(session.metadata);
+    const customerMeta = parseCustomerMetadata(session.metadata ?? undefined);
     const customerName = `${customerMeta.firstName} ${customerMeta.lastName}`.trim();
     const totalPrice = Math.round((session.amount_total ?? 0) / 100);
 
@@ -104,6 +132,9 @@ export async function POST(req: Request) {
           orderStatus: "processing",
           paymentStatus: "paid",
           paymentMethod: "stripe",
+          shippingMethod: customerMeta.shippingMethod,
+          customerNotes: customerMeta.notes,
+          preferredDeliveryTime: customerMeta.preferredDeliveryTime,
           totalPrice,
           customerName,
           customerEmail: session.customer_details?.email ?? "",
@@ -111,9 +142,10 @@ export async function POST(req: Request) {
           shippingAddress: {
             country: "ES",
             city: customerMeta.city,
+            province: customerMeta.province,
             zipCode: customerMeta.postalCode,
             street: customerMeta.address,
-            apartment: "",
+            apartment: customerMeta.apartment,
           },
         },
       }),
@@ -149,7 +181,10 @@ export async function POST(req: Request) {
     );
 
     return Response.json({ ok: true });
-  } catch (error: any) {
-    return Response.json({ error: error?.message ?? "Confirm failed" }, { status: 500 });
+  } catch (error: unknown) {
+    return Response.json(
+      { error: error instanceof Error ? error.message : "Confirm failed" },
+      { status: 500 },
+    );
   }
 }

@@ -92,6 +92,7 @@ export type StrapiAddress = {
   id: number;
   country: string;
   city: string;
+  province?: string;
   zipCode: string;
   street: string;
   apartment?: string;
@@ -101,12 +102,14 @@ export type StrapiOrder = {
   id: number;
   documentId: string;
   orderNumber: string;
-  orderStatus: "pending" | "paid" | "shipped" | "completed" | "cancelled";
-  paymentStatus: "pending" | "paid" | "failed" | "refunded";
+  orderStatus: "pending" | "processing" | "shipped" | "completed" | "cancelled";
+  paymentStatus: "pending" | "paid" | "failed" | "refunded" | "cancelled";
   totalPrice: number;
   shippingPrice?: number;
   paymentMethod?: string;
   shippingMethod?: string;
+  customerNotes?: string;
+  preferredDeliveryTime?: string;
   customerName: string;
   customerEmail: string;
   customerPhone?: string;
@@ -117,6 +120,7 @@ export type StrapiOrder = {
   };
   order_items?: StrapiOrderItem[];
   shared_address?: StrapiAddress[];
+  shippingAddress?: StrapiAddress | StrapiAddress[];
 };
 
 export type StrapiProduct = {

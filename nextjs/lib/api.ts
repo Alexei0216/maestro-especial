@@ -103,12 +103,14 @@ function mapOrderItems(items?: StrapiOrderItem[]) {
   }));
 }
 
-function mapAddress(address?: StrapiAddress[]): Order["shippingAddress"] | undefined {
-  if (!address || address.length === 0) return undefined;
-  const addr = address[0];
+function mapAddress(address?: StrapiAddress | StrapiAddress[]): Order["shippingAddress"] | undefined {
+  if (!address) return undefined;
+  const addr = Array.isArray(address) ? address[0] : address;
+  if (!addr) return undefined;
   return {
     country: addr.country,
     city: addr.city,
+    province: addr.province,
     zipCode: addr.zipCode,
     street: addr.street,
     apartment: addr.apartment,
@@ -134,12 +136,18 @@ export function buildStrapiQuery(searchParams: Record<string, string | string[] 
     ? [searchParams.types].filter(Boolean) : [];
   const search = typeof searchParams.search === 'string' && searchParams.search.trim() !== ''
     ? searchParams.search.trim() : undefined;
-  const page = (typeof searchParams.page === 'string' && !isNaN(Number(searchParams.page)))
-    || (typeof searchParams['pagination[page]'] === 'string' && !isNaN(Number(searchParams['pagination[page]'])))
-    ? (searchParams.page || searchParams['pagination[page]']) : '1';
-  const pageSize = (typeof searchParams.pageSize === 'string' && !isNaN(Number(searchParams.pageSize)))
-    || (typeof searchParams['pagination[pageSize]'] === 'string' && !isNaN(Number(searchParams['pagination[pageSize]'])))
-    ? (searchParams.pageSize || searchParams['pagination[pageSize]']) : '12';
+  const page =
+    typeof searchParams.page === 'string' && !isNaN(Number(searchParams.page))
+      ? searchParams.page
+      : typeof searchParams['pagination[page]'] === 'string' && !isNaN(Number(searchParams['pagination[page]']))
+        ? searchParams['pagination[page]']
+        : '1';
+  const pageSize =
+    typeof searchParams.pageSize === 'string' && !isNaN(Number(searchParams.pageSize))
+      ? searchParams.pageSize
+      : typeof searchParams['pagination[pageSize]'] === 'string' && !isNaN(Number(searchParams['pagination[pageSize]']))
+        ? searchParams['pagination[pageSize]']
+        : '12';
 
   console.log("Parsed search params:", { minPrice, maxPrice, categories, sort, search, page, pageSize });
 
@@ -555,7 +563,7 @@ export async function getCategory(slug: string): Promise<Category | undefined> {
 // Orders
 export async function getOrders(): Promise<Order[]> {
   const res = await fetch(
-    `${SERVER_API_URL}/api/orders?populate[order_items][populate][product]=*&populate[order_items][populate][productImageSnapshot]=*&populate[shared_address]=*&populate[user]=*`,
+    `${SERVER_API_URL}/api/orders?populate[order_items][populate][product]=*&populate[order_items][populate][productImageSnapshot]=*&populate[shippingAddress]=*&populate[user]=*`,
     {
       cache: "no-store",
     }
@@ -578,18 +586,20 @@ export async function getOrders(): Promise<Order[]> {
       shippingPrice: item.shippingPrice,
       paymentMethod: item.paymentMethod,
       shippingMethod: item.shippingMethod,
+      customerNotes: item.customerNotes,
+      preferredDeliveryTime: item.preferredDeliveryTime,
       customerName: item.customerName,
       customerEmail: item.customerEmail,
       customerPhone: item.customerPhone,
       items: mapOrderItems(item.order_items),
-      shippingAddress: mapAddress(item.shared_address),
+      shippingAddress: mapAddress(item.shippingAddress ?? item.shared_address),
     })
   );
 }
 
 export async function getOrder(orderNumber: string): Promise<Order | undefined> {
   const res = await fetch(
-    `${SERVER_API_URL}/api/orders?filters[orderNumber][$eq]=${orderNumber}&populate[order_items][populate][product]=*&populate[order_items][populate][productImageSnapshot]=*&populate[shared_address]=*&populate[user]=*`,
+    `${SERVER_API_URL}/api/orders?filters[orderNumber][$eq]=${orderNumber}&populate[order_items][populate][product]=*&populate[order_items][populate][productImageSnapshot]=*&populate[shippingAddress]=*&populate[user]=*`,
     {
       cache: "no-store",
     }
@@ -614,11 +624,13 @@ export async function getOrder(orderNumber: string): Promise<Order | undefined> 
     shippingPrice: item.shippingPrice,
     paymentMethod: item.paymentMethod,
     shippingMethod: item.shippingMethod,
+    customerNotes: item.customerNotes,
+    preferredDeliveryTime: item.preferredDeliveryTime,
     customerName: item.customerName,
     customerEmail: item.customerEmail,
     customerPhone: item.customerPhone,
     items: mapOrderItems(item.order_items),
-    shippingAddress: mapAddress(item.shared_address),
+    shippingAddress: mapAddress(item.shippingAddress ?? item.shared_address),
   };
 }
 
