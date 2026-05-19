@@ -524,7 +524,7 @@ export interface ApiOrderItemOrderItem extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     order: Schema.Attribute.Relation<'manyToOne', 'api::order.order'>;
-    product: Schema.Attribute.Relation<'oneToOne', 'api::product.product'>;
+    product: Schema.Attribute.Relation<'manyToOne', 'api::product.product'>;
     productImageSnapshot: Schema.Attribute.Media<
       'images' | 'files' | 'videos' | 'audios'
     >;
@@ -553,6 +553,7 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    currency: Schema.Attribute.String & Schema.Attribute.DefaultTo<'EUR'>;
     customerEmail: Schema.Attribute.Email;
     customerName: Schema.Attribute.String;
     customerPhone: Schema.Attribute.String;
@@ -565,16 +566,22 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
     >;
     orderNumber: Schema.Attribute.UID;
     orderStatus: Schema.Attribute.Enumeration<
-      ['pending', 'paid', 'shipped', 'completed', 'cancelled']
+      ['pending', 'processing', 'shipped', 'completed', 'cancelled']
     >;
+    paidAt: Schema.Attribute.DateTime;
     paymentMethod: Schema.Attribute.String;
     paymentStatus: Schema.Attribute.Enumeration<
-      ['pending', 'paid', 'failed', 'refunded']
+      ['pending', 'paid', 'failed', 'refunded', 'cancelled']
     >;
     publishedAt: Schema.Attribute.DateTime;
-    shippingAddress: Schema.Attribute.Component<'address.shared-address', true>;
+    shippingAddress: Schema.Attribute.Component<
+      'address.shared-address',
+      false
+    >;
     shippingMethod: Schema.Attribute.String;
     shippingPrice: Schema.Attribute.Decimal;
+    stripePaymentIntentId: Schema.Attribute.String;
+    stripeSessionId: Schema.Attribute.String;
     totalPrice: Schema.Attribute.Integer;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -661,8 +668,8 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     name: Schema.Attribute.String & Schema.Attribute.Required;
     noiseLevel: Schema.Attribute.Integer & Schema.Attribute.Required;
     oldPrice: Schema.Attribute.Decimal;
-    order_item: Schema.Attribute.Relation<
-      'oneToOne',
+    order_items: Schema.Attribute.Relation<
+      'oneToMany',
       'api::order-item.order-item'
     >;
     price: Schema.Attribute.Decimal & Schema.Attribute.Required;

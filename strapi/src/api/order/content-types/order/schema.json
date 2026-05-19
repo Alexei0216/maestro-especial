@@ -24,7 +24,7 @@
       "type": "enumeration",
       "enum": [
         "pending",
-        "paid",
+        "processing",
         "shipped",
         "completed",
         "cancelled"
@@ -36,7 +36,8 @@
         "pending",
         "paid",
         "failed",
-        "refunded"
+        "refunded",
+        "cancelled"
       ]
     },
     "totalPrice": {
@@ -69,7 +70,20 @@
     "shippingAddress": {
       "type": "component",
       "component": "address.shared-address",
-      "repeatable": true
+      "repeatable": false
+    },
+    "stripeSessionId": {
+      "type": "string"
+    },
+    "stripePaymentIntentId": {
+      "type": "string"
+    },
+    "paidAt": {
+      "type": "datetime"
+    },
+    "currency": {
+      "type": "string",
+      "default": "EUR"
     }
   }
 }

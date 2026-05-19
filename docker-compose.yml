@@ -32,6 +32,7 @@ services:
       dockerfile: Dockerfile.dev
     command: npm run dev
     restart: unless-stopped
+    env_file: .env
     environment:
       NODE_ENV: development
       STRAPI_API_URL: http://strapi:1337

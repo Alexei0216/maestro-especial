@@ -16,11 +16,49 @@ function formatPrice(price: number) {
 export default function CheckoutForm() {
   const { clearCart, isReady, items, subtotal } = useCart();
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setIsSubmitted(true);
-    clearCart();
+
+    setLoading(true);
+
+    try {
+      const formData = new FormData(event.currentTarget);
+
+      const payload = {
+        customer: {
+          firstName: formData.get("firstName"),
+          lastName: formData.get("lastName"),
+          email: formData.get("email"),
+          phone: formData.get("phone"),
+          address: formData.get("address"),
+          city: formData.get("city"),
+          postalCode: formData.get("postalCode"),
+          notes: formData.get("notes"),
+        },
+        items,
+        subtotal,
+      };
+
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        throw new Error("Checkout failed");
+      }
+
+      const data = await res.json();
+
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    } finally {
+      setLoading(false);
+    }
   }
 
   if (!isReady) {
@@ -30,27 +68,6 @@ export default function CheckoutForm() {
           Checkout
         </p>
         <h1 className="mt-3 text-4xl font-bold">Preparando tu pedido</h1>
-      </section>
-    );
-  }
-
-  if (isSubmitted) {
-    return (
-      <section className="animate-fade-up mx-auto max-w-2xl rounded-lg bg-white px-6 py-12 text-center shadow-sm">
-        <p className="text-sm font-semibold uppercase tracking-[0.12em] text-yellow-700">
-          Pedido recibido
-        </p>
-        <h1 className="mt-3 text-4xl font-bold">Gracias por tu pedido</h1>
-        <p className="mt-4 text-neutral-600">
-          Hemos preparado tu solicitud. Te contactaremos para confirmar detalles,
-          disponibilidad y envio.
-        </p>
-        <Link
-          href="/"
-          className="motion-soft mt-8 inline-flex rounded-lg bg-yellow-500 px-6 py-3 font-bold text-black hover:-translate-y-0.5 hover:bg-yellow-600 hover:shadow-lg"
-        >
-          Volver al catalogo
-        </Link>
       </section>
     );
   }
@@ -213,9 +230,10 @@ export default function CheckoutForm() {
 
         <button
           type="submit"
+          disabled={loading}
           className="motion-soft mt-6 w-full rounded-lg bg-yellow-500 px-6 py-3 font-bold text-black hover:-translate-y-0.5 hover:bg-yellow-600 hover:shadow-lg"
         >
-          Confirmar pedido
+          {loading ? "Procesando..." : "Confirmar pedido"}
         </button>
       </aside>
     </form>

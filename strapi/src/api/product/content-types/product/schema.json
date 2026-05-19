@@ -85,9 +85,9 @@
       "target": "api::product-variant.product-variant",
       "mappedBy": "product"
     },
-    "order_item": {
+    "order_items": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "oneToMany",
       "target": "api::order-item.order-item",
       "mappedBy": "product"
     },
