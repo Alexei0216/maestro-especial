@@ -14,14 +14,15 @@ function formatPrice(price: number) {
 }
 
 export default function CheckoutForm() {
-  const { clearCart, isReady, items, subtotal } = useCart();
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const { isReady, items, subtotal } = useCart();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     setLoading(true);
+    setError(null);
 
     try {
       const formData = new FormData(event.currentTarget);
@@ -48,7 +49,8 @@ export default function CheckoutForm() {
       });
 
       if (!res.ok) {
-        throw new Error("Checkout failed");
+        const payload = await res.json().catch(() => null);
+        throw new Error(payload?.error ?? "Checkout failed");
       }
 
       const data = await res.json();
@@ -56,6 +58,8 @@ export default function CheckoutForm() {
       if (data?.url) {
         window.location.href = data.url;
       }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Checkout failed");
     } finally {
       setLoading(false);
     }

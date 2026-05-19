@@ -4,11 +4,13 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useCart } from "@/components/cart/CartProvider";
+import { useState } from "react";
 
 export default function CheckoutSuccessPage() {
   const { clearCart, isReady } = useCart();
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
+  const [confirmError, setConfirmError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isReady) return;
@@ -17,11 +19,18 @@ export default function CheckoutSuccessPage() {
 
   useEffect(() => {
     if (!sessionId) return;
-    void fetch("/api/checkout/confirm", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sessionId }),
-    });
+    void (async () => {
+      const res = await fetch("/api/checkout/confirm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId }),
+      });
+
+      if (!res.ok) {
+        const payload = await res.json().catch(() => null);
+        setConfirmError(payload?.error ?? "Order confirmation failed");
+      }
+    })();
   }, [sessionId]);
 
   return (
@@ -33,6 +42,7 @@ export default function CheckoutSuccessPage() {
       <p className="mt-4 text-neutral-600">
         Hemos recibido tu pago y estamos procesando el pedido.
       </p>
+      {confirmError && <p className="mt-3 text-sm text-red-600">{confirmError}</p>}
       <Link
         href="/catalog"
         className="motion-soft mt-8 inline-flex rounded-lg bg-yellow-500 px-6 py-3 font-bold text-black hover:-translate-y-0.5 hover:bg-yellow-600 hover:shadow-lg"

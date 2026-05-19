@@ -1,6 +1,9 @@
 import { stripe } from "@/lib/stripe";
 
-const SERVER_API_URL = process.env.STRAPI_API_URL ?? "http://strapi:1337";
+const SERVER_API_URL =
+  process.env.STRAPI_API_URL ??
+  process.env.NEXT_PUBLIC_API_URL ??
+  "http://localhost:1337";
 const STRAPI_API_TOKEN = process.env.STRAPI_API_TOKEN;
 
 async function strapiRequest(path: string, init?: RequestInit) {
@@ -98,22 +101,20 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         data: {
           orderNumber: session.id,
-          orderStatus: "paid",
+          orderStatus: "processing",
           paymentStatus: "paid",
           paymentMethod: "stripe",
           totalPrice,
           customerName,
           customerEmail: session.customer_details?.email ?? "",
           customerPhone: customerMeta.phone,
-          shippingAddress: [
-            {
-              country: "ES",
-              city: customerMeta.city,
-              zipCode: customerMeta.postalCode,
-              street: customerMeta.address,
-              apartment: "",
-            },
-          ],
+          shippingAddress: {
+            country: "ES",
+            city: customerMeta.city,
+            zipCode: customerMeta.postalCode,
+            street: customerMeta.address,
+            apartment: "",
+          },
         },
       }),
     });
