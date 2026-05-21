@@ -8,8 +8,8 @@ export default function HomeStorefront() {
   return (
     <Container>
       <section className="animate-fade-up py-12">
-        <div className="grid gap-4 rounded-lg bg-white p-5 shadow-sm lg:grid-cols-4 lg:p-6">
-          <div className="border-b border-neutral-200 pb-4 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-5">
+        <div className="grid gap-4 rounded-lg bg-white p-5 shadow-sm lg:grid-cols-4 lg:p-6 flex justify-between items-center">
+          <div className="border-b border-neutral-200 pb-4 lg:border-b-0  lg:pb-0 lg:pr-5">
             <p className="text-sm font-semibold uppercase tracking-[0.14em] text-yellow-700">
               Tienda tecnica
             </p>
